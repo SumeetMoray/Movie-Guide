@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Popular Movies Stage 1</string>
+    <string name="action_settings">Settings</string>
+
+    <string-array name="sortOptions">
+        <item>Popularity</item>
+        <item>HighestRated</item>
+    </string-array>
+    <string name="title_activity_movie_detail">Movie Details</string>
+
+
+</resources>
