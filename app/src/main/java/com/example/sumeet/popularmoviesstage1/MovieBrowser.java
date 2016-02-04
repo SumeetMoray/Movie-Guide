@@ -35,7 +35,7 @@ public class MovieBrowser extends AppCompatActivity implements AdapterView.OnIte
 
     String url="";
 
-    final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
+            final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
 
 
 
@@ -196,7 +196,7 @@ public class MovieBrowser extends AppCompatActivity implements AdapterView.OnIte
 
 
 
-                    for(int i = 0;i<moviesArray.length();i++)
+                    for(int i = 0; i < moviesArray.length();i++)
                     {
                         JSONObject movieObject = moviesArray.getJSONObject(i);
 
@@ -207,6 +207,7 @@ public class MovieBrowser extends AppCompatActivity implements AdapterView.OnIte
                         movie.setPosterURL(movieObject.getString("poster_path"));
                         movie.setReleaseDate(movieObject.getString("release_date"));
                         movie.setUserRating(movieObject.getDouble("vote_average"));
+                        movie.setMovieId(movieObject.getInt("id"));
 
                         dataset.add(movie);
 

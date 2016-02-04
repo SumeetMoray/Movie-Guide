@@ -1,6 +1,7 @@
 package com.example.sumeet.popularmoviesstage1;
 
 import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,21 +12,37 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
 
+    final String BASE_URL= "http://api.themoviedb.org/3/movie/";
+    final String API_KEY_PARAM = "api_key";
+
+    final String API_KEY ="65d0d0521287ca89086b923344334318";
+
+
     Movie movieForDisplay;
+    ArrayList<MovieReview> reviewsList = new ArrayList<>();
 
 
     ImageView moviePoster;
-    TextView originalTitle,releaseDate,voteAverage,plotSynopsis,monthAndDay;
+    TextView originalTitle,releaseDate,voteAverage,plotSynopsis,monthAndDay,reviews;
 
     String[] months = {"January",
             "February",
@@ -57,6 +74,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         movieForDisplay.setOriginalTitle(getIntent().getStringExtra(Movie.ORIGINAL_TITLE_KEY));
         movieForDisplay.setReleaseDate(getIntent().getStringExtra(Movie.RELEASE_DATE_KEY));
         movieForDisplay.setUserRating(getIntent().getDoubleExtra(Movie.USER_RATING_KEY,0));
+        movieForDisplay.setMovieId(getIntent().getIntExtra(Movie.MOVIE_ID_KEY,0));
+
 
 
 
@@ -68,6 +87,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         monthAndDay = (TextView) findViewById(R.id.month_day);
 
         originalTitle = (TextView) findViewById(R.id.original_title);
+
+        reviews = (TextView) findViewById(R.id.reviews);
 
         if(movieForDisplay!=null) {
 
@@ -100,6 +121,95 @@ public class MovieDetailActivity extends AppCompatActivity {
 
 
         }
+
+
+        makeRequest();
+
+    }
+
+
+
+    public void makeRequest()
+    {
+
+        String url = BASE_URL + movieForDisplay.getMovieId() + "/reviews";
+
+        Uri builtUri = Uri.parse(url)
+                .buildUpon()
+                .appendQueryParameter(API_KEY_PARAM,API_KEY)
+                .build();
+
+
+        String builtURL = builtUri.toString();
+
+
+        StringRequest request = new StringRequest(Request.Method.GET, builtURL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    JSONArray jsonArray = jsonObject.getJSONArray("results");
+
+                    for(int i = 0;i<jsonArray.length();i++){
+
+                        JSONObject reviewJSON = jsonArray.getJSONObject(i);
+
+                        MovieReview movieReview = new MovieReview();
+
+                        movieReview.setAuthorName(reviewJSON.getString("author"));
+                        movieReview.setReview(reviewJSON.getString("content"));
+
+                        reviewsList.add(movieReview);
+
+                    }
+
+
+
+
+                    updateReviews();
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+
+        VolleySingleton.getInstance(this).addToRequestQueue(request);
+
+    }
+
+
+
+    public void updateReviews()
+    {
+        String reviewString = "";
+
+
+        for(MovieReview review : reviewsList)
+        {
+
+            reviewString = reviewString + "\n\n" + review.getAuthorName() + "\n\n" +
+                    review.getReview();
+
+
+        }
+
+
+        reviews.setText(reviewString);
+
 
 
     }

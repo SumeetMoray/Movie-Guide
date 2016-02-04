@@ -61,6 +61,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                 intent.putExtra(Movie.ORIGINAL_TITLE_KEY,movie.getOriginalTitle());
                 intent.putExtra(Movie.RELEASE_DATE_KEY,movie.getReleaseDate());
                 intent.putExtra(Movie.USER_RATING_KEY,movie.getUserRating());
+                intent.putExtra(Movie.MOVIE_ID_KEY,movie.getMovieId());
 
                 context.startActivity(intent);
 

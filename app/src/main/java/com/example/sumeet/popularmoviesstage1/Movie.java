@@ -15,6 +15,7 @@ public class Movie {
     static final String PLOT_SYNOPSIS_KEY = "PlotSynopsis";
     static final String USER_RATING_KEY = "UserRating";
     static final String RELEASE_DATE_KEY = "ReleaseDate";
+    static final String MOVIE_ID_KEY = "MovieId";
 
 
     String originalTitle;
@@ -22,8 +23,16 @@ public class Movie {
     String plotSynopsis;
     Double userRating;
     String releaseDate;
+    int movieId;
 
 
+    public int getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(int movieId) {
+        this.movieId = movieId;
+    }
 
     public String getOriginalTitle() {
         return originalTitle;
