@@ -1,4 +1,4 @@
-package com.example.sumeet.popularmoviesstage1;
+package com.example.sumeet.popularmoviesstage1.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.sumeet.popularmoviesstage1.MovieDetailActivity;
+import com.example.sumeet.popularmoviesstage1.R;
 import com.example.sumeet.popularmoviesstage1.model.Movie;
 import com.squareup.picasso.Picasso;
 
@@ -21,11 +23,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
     ArrayList<Movie> dataset;
     Context context;
+    MovieBrowserFragment fragment;
 
-    public MoviesAdapter(ArrayList<Movie> dataset, Context context) {
+    public MoviesAdapter(ArrayList<Movie> dataset, Context context, MovieBrowserFragment fragment) {
         this.dataset = dataset;
         this.context = context;
+        this.fragment = fragment;
     }
+
 
     @Override
     public MoviesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -45,9 +50,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
         Picasso.with(context).load("http://image.tmdb.org/t/p/w185/" + dataset.get(position).getPosterURL()).into(holder.moviePoster);
 
-
-
-
         holder.moviePoster.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -55,16 +57,19 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
                 Movie movie = dataset.get(position);
 
-                Intent intent = new Intent(context, MovieDetailActivity.class);
 
-                intent.putExtra(Movie.POSTER_URL_KEY,movie.getPosterURL());
-                intent.putExtra(Movie.PLOT_SYNOPSIS_KEY,movie.getPlotSynopsis());
-                intent.putExtra(Movie.ORIGINAL_TITLE_KEY,movie.getOriginalTitle());
-                intent.putExtra(Movie.RELEASE_DATE_KEY,movie.getReleaseDate());
-                intent.putExtra(Movie.USER_RATING_KEY,movie.getUserRating());
-                intent.putExtra(Movie.MOVIE_ID_KEY,movie.getMovieId());
+                fragment.movieSelected(movie);
 
-                context.startActivity(intent);
+                //Intent intent = new Intent(context, MovieDetailActivity.class);
+
+                //intent.putExtra(Movie.POSTER_URL_KEY,movie.getPosterURL());
+                //intent.putExtra(Movie.PLOT_SYNOPSIS_KEY,movie.getPlotSynopsis());
+                //intent.putExtra(Movie.ORIGINAL_TITLE_KEY,movie.getOriginalTitle());
+                //intent.putExtra(Movie.RELEASE_DATE_KEY,movie.getReleaseDate());
+                //intent.putExtra(Movie.USER_RATING_KEY,movie.getUserRating());
+                //intent.putExtra(Movie.MOVIE_ID_KEY,movie.getMovieId());
+
+                //context.startActivity(intent);
 
             }
         });
@@ -75,9 +80,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     @Override
     public int getItemCount() {
 
-
         return dataset.size();
-
     }
 
 

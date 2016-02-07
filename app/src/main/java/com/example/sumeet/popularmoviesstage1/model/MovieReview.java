@@ -1,4 +1,4 @@
-package com.example.sumeet.popularmoviesstage1;
+package com.example.sumeet.popularmoviesstage1.model;
 
 /**
  * Created by sumeet on 4/2/16.

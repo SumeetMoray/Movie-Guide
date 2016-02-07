@@ -1,9 +1,14 @@
-package com.example.sumeet.popularmoviesstage1;
+package com.example.sumeet.popularmoviesstage1.fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,6 +16,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.sumeet.popularmoviesstage1.R;
+import com.example.sumeet.popularmoviesstage1.VolleySingleton;
 import com.example.sumeet.popularmoviesstage1.model.Movie;
 import com.example.sumeet.popularmoviesstage1.model.MovieReview;
 import com.squareup.picasso.Picasso;
@@ -23,7 +30,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-public class MovieDetailActivity extends AppCompatActivity {
+public class MovieDetailFragment extends Fragment{
 
 
     final String BASE_URL= "http://api.themoviedb.org/3/movie/";
@@ -35,6 +42,14 @@ public class MovieDetailActivity extends AppCompatActivity {
     Movie movieForDisplay;
     ArrayList<MovieReview> reviewsList = new ArrayList<>();
 
+
+    public Movie getMovieForDisplay() {
+        return movieForDisplay;
+    }
+
+    public void setMovieForDisplay(Movie movieForDisplay) {
+        this.movieForDisplay = movieForDisplay;
+    }
 
     ImageView moviePoster;
     TextView originalTitle,releaseDate,voteAverage,plotSynopsis,monthAndDay,reviews;
@@ -52,44 +67,49 @@ public class MovieDetailActivity extends AppCompatActivity {
             "November",
             "December"};
 
+
+    public MovieDetailFragment() {
+        super();
+    }
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        super.onCreateView(inflater, container, savedInstanceState);
 
 
-        movieForDisplay = new Movie();
-
-        movieForDisplay.setPosterURL(getIntent().getStringExtra(Movie.POSTER_URL_KEY));
-        movieForDisplay.setPlotSynopsis(getIntent().getStringExtra(Movie.PLOT_SYNOPSIS_KEY));
-        movieForDisplay.setOriginalTitle(getIntent().getStringExtra(Movie.ORIGINAL_TITLE_KEY));
-        movieForDisplay.setReleaseDate(getIntent().getStringExtra(Movie.RELEASE_DATE_KEY));
-        movieForDisplay.setUserRating(getIntent().getDoubleExtra(Movie.USER_RATING_KEY,0));
-        movieForDisplay.setMovieId(getIntent().getIntExtra(Movie.MOVIE_ID_KEY,0));
+        View fragmentView = inflater.inflate(R.layout.activity_movie_detail,container,false);
 
 
 
 
+        //movieForDisplay.setPosterURL(getIntent().getStringExtra(Movie.POSTER_URL_KEY));
+        //movieForDisplay.setPlotSynopsis(getIntent().getStringExtra(Movie.PLOT_SYNOPSIS_KEY));
+        //movieForDisplay.setOriginalTitle(getIntent().getStringExtra(Movie.ORIGINAL_TITLE_KEY));
+        //movieForDisplay.setReleaseDate(getIntent().getStringExtra(Movie.RELEASE_DATE_KEY));
+        //movieForDisplay.setUserRating(getIntent().getDoubleExtra(Movie.USER_RATING_KEY,0));
+        //movieForDisplay.setMovieId(getIntent().getIntExtra(Movie.MOVIE_ID_KEY,0));
 
-        moviePoster = (ImageView) findViewById(R.id.movie_poster);
-        releaseDate = (TextView) findViewById(R.id.release_date_year);
-        voteAverage = (TextView) findViewById(R.id.vote_average);
-        plotSynopsis = (TextView) findViewById(R.id.plotSynopsis);
-        monthAndDay = (TextView) findViewById(R.id.month_day);
 
-        originalTitle = (TextView) findViewById(R.id.original_title);
 
-        reviews = (TextView) findViewById(R.id.reviews);
+
+
+        moviePoster = (ImageView) fragmentView.findViewById(R.id.movie_poster);
+        releaseDate = (TextView) fragmentView.findViewById(R.id.release_date_year);
+        voteAverage = (TextView) fragmentView.findViewById(R.id.vote_average);
+        plotSynopsis = (TextView) fragmentView.findViewById(R.id.plotSynopsis);
+        monthAndDay = (TextView) fragmentView.findViewById(R.id.month_day);
+
+        originalTitle = (TextView) fragmentView.findViewById(R.id.original_title);
+
+        reviews = (TextView) fragmentView.findViewById(R.id.reviews);
 
         if(movieForDisplay!=null) {
 
 
 
-            Picasso.with(this).load("http://image.tmdb.org/t/p/w185/" + movieForDisplay.getPosterURL()).into(moviePoster);
+            Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w185/" + movieForDisplay.getPosterURL()).into(moviePoster);
             originalTitle.setText(movieForDisplay.getOriginalTitle());
             //releaseDate.setText(movieForDisplay.getReleaseDate());
             voteAverage.setText(String.valueOf(movieForDisplay.getUserRating()) + " / 10");
@@ -112,17 +132,12 @@ public class MovieDetailActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-
-
-
         }
-
 
         makeRequest();
 
+        return  fragmentView;
     }
-
-
 
     public void makeRequest()
     {
@@ -180,7 +195,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         });
 
 
-        VolleySingleton.getInstance(this).addToRequestQueue(request);
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(request);
 
     }
 
@@ -201,7 +216,5 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         reviews.setText(reviewString);
     }
-
-
 
 }

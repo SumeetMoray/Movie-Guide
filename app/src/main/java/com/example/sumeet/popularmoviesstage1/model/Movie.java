@@ -1,4 +1,4 @@
-package com.example.sumeet.popularmoviesstage1;
+package com.example.sumeet.popularmoviesstage1.model;
 
 import java.util.Date;
 
@@ -10,12 +10,12 @@ public class Movie {
 
 
     // Keys for passing data from one activity to another using intents
-    static final String ORIGINAL_TITLE_KEY = "OriginalTitle";
-    static final String POSTER_URL_KEY = "PosterURL";
-    static final String PLOT_SYNOPSIS_KEY = "PlotSynopsis";
-    static final String USER_RATING_KEY = "UserRating";
-    static final String RELEASE_DATE_KEY = "ReleaseDate";
-    static final String MOVIE_ID_KEY = "MovieId";
+    public static final String ORIGINAL_TITLE_KEY = "OriginalTitle";
+    public static final String POSTER_URL_KEY = "PosterURL";
+    public static final String PLOT_SYNOPSIS_KEY = "PlotSynopsis";
+    public static final String USER_RATING_KEY = "UserRating";
+    public static final String RELEASE_DATE_KEY = "ReleaseDate";
+    public static final String MOVIE_ID_KEY = "MovieId";
 
 
     String originalTitle;

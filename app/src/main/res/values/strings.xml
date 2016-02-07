@@ -7,6 +7,7 @@
         <item>HighestRated</item>
     </string-array>
     <string name="title_activity_movie_detail">Movie Details</string>
+    <string name="title_activity_main">Popular Movies</string>
 
 
 </resources>
