@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
         movieDetailFragment.setMovieForDisplay(movie);
 
 
+        // Two pane case
         if(findViewById(R.id.movie_detail_container)!= null)
         {
             getSupportFragmentManager()
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
 
         }
 
+        // one pane case
         if(findViewById(R.id.movie_detail_container)== null)
         {
             getSupportFragmentManager()

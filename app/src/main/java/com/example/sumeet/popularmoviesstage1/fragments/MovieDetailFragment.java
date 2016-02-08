@@ -1,5 +1,6 @@
 package com.example.sumeet.popularmoviesstage1.fragments;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -135,6 +136,7 @@ public class MovieDetailFragment extends Fragment{
         }
 
         makeRequest();
+        makeRequestTrailers();
 
         return  fragmentView;
     }
@@ -197,6 +199,69 @@ public class MovieDetailFragment extends Fragment{
 
         VolleySingleton.getInstance(getActivity()).addToRequestQueue(request);
 
+    }
+
+    public void makeRequestTrailers()
+    {
+        //http://api.themoviedb.org/3/movie/281957/videos?api_key=65d0d0521287ca89086b923344334318
+
+
+        String url = BASE_URL + movieForDisplay.getMovieId() + "/videos";
+
+
+        Uri builtUri = Uri.parse(url)
+                .buildUpon()
+                .appendQueryParameter(API_KEY_PARAM,API_KEY)
+                .build();
+
+
+        String builtURL = builtUri.toString();
+
+
+        StringRequest request = new StringRequest(Request.Method.GET, builtURL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+
+                try {
+
+
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    JSONArray resultsArray = jsonObject.getJSONArray("results");
+
+
+
+                    for (int i = 0; i < resultsArray.length(); i++)
+                    {
+
+                        JSONObject result = resultsArray.getJSONObject(i);
+
+                        String key = result.getString("key");
+
+                                startActivity(new Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://www.youtube.com/watch?v=" + key)));
+
+                    }
+
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(request);
     }
 
 

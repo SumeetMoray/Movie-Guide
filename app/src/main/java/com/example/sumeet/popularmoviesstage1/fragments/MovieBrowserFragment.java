@@ -276,9 +276,4 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
     }
 
-
-
-
-
-
 }
