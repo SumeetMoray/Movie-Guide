@@ -126,17 +126,20 @@ public class MovieDetailFragment extends Fragment{
 
                 releaseDate.setText(String.valueOf(dDate.getYear()+1900));
 
-                monthAndDay.setText(months[dDate.getMonth()-1] + " " + String.valueOf(dDate.getDay()));
+                //monthAndDay.setText(months[dDate.getMonth()-1] + " " + String.valueOf(dDate.getDay()));
 
 
             } catch (ParseException e) {
                 e.printStackTrace();
             }
 
+            makeRequest();
+            makeRequestTrailers();
+
         }
 
-        makeRequest();
-        makeRequestTrailers();
+
+
 
         return  fragmentView;
     }
@@ -239,9 +242,9 @@ public class MovieDetailFragment extends Fragment{
 
                         String key = result.getString("key");
 
-                                startActivity(new Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse("https://www.youtube.com/watch?v=" + key)));
+//                                startActivity(new Intent(
+  //                              Intent.ACTION_VIEW,
+    //                            Uri.parse("https://www.youtube.com/watch?v=" + key)));
 
                     }
 

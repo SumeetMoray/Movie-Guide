@@ -1,8 +1,11 @@
 package com.example.sumeet.popularmoviesstage1.fragments;
 
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -43,10 +46,10 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
     String url="";
 
-            final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
+    CoordinatorLayout coordinatorLayout;
 
 
-
+    final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
 
 
 
@@ -70,7 +73,18 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
     Spinner sortOptions;
 
 
+    boolean isTwoPane = false;
 
+    final String isTwoPane_KEY = "isTwoPane";
+
+
+    public boolean isTwoPane() {
+        return isTwoPane;
+    }
+
+    public void setTwoPane(boolean twoPane) {
+        isTwoPane = twoPane;
+    }
 
     @Nullable
     @Override
@@ -85,7 +99,29 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
         adapter = new MoviesAdapter(dataset,getActivity(),this);
         recyclerView.setAdapter(adapter);
 
-        layoutManager = new GridLayoutManager(getActivity(),2);
+        layoutManager = new GridLayoutManager(getActivity(), 2);
+
+
+
+        // restore instance state
+        // an instance state needs to be restored after a configuration change
+        if(savedInstanceState != null) {
+            isTwoPane = savedInstanceState.getBoolean(isTwoPane_KEY, false);
+        }
+
+
+
+        Log.d("TwoPaneCheck",String.valueOf(isTwoPane));
+
+        if(isTwoPane) {
+
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+                layoutManager.setSpanCount(1);
+
+            }
+        }
+
         recyclerView.setLayoutManager(layoutManager);
 
         // bind spinner
@@ -102,6 +138,9 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
                     if (currentPage <= (totalPages - 1)) {
 
                         currentPage = currentPage + 1;
+
+                        Snackbar.make(coordinatorLayout,"Loading page : " + String.valueOf(currentPage),Snackbar.LENGTH_SHORT).show();
+
                         makeRequest();
                     }
 
@@ -122,11 +161,18 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
         makeRequest();
 
+        coordinatorLayout = (CoordinatorLayout) fragmentView.findViewById(R.id.coordinatorLayout);
+
 
         return fragmentView;
     }
 
 
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+    }
 
 
 
@@ -257,6 +303,7 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
     }
 
 
+
     public void movieSelected(Movie movie) {
 
 
@@ -273,6 +320,14 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
         public void movieSelected(Movie movie);
 
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean(isTwoPane_KEY , isTwoPane);
 
     }
 

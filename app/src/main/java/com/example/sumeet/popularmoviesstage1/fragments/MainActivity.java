@@ -1,5 +1,6 @@
 package com.example.sumeet.popularmoviesstage1.fragments;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,18 +22,17 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
         movieDetailFragment.setMovieForDisplay(movie);
 
 
+
+
         // Two pane case
-        if(findViewById(R.id.movie_detail_container)!= null)
+        if((findViewById(R.id.movie_detail_container)!= null) && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE))
         {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.movie_detail_container,movieDetailFragment)
                     .commit();
 
-        }
-
-        // one pane case
-        if(findViewById(R.id.movie_detail_container)== null)
+        } else
         {
             getSupportFragmentManager()
                     .beginTransaction()
@@ -40,6 +40,13 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
                     .addToBackStack(null)
                     .commit();
         }
+
+
+        // one pane case
+        //if(findViewById(R.id.movie_detail_container)== null)
+        //{
+
+        //}
     }
 
 
@@ -50,18 +57,45 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+
         if(savedInstanceState==null)
         {
-//            getSupportFragmentManager()
-//                    .beginTransaction()
-//                    .replace(R.id.movie_detail_container,new MovieDetailFragment())
-//                    .commit();
+
+            MovieBrowserFragment fragment = new MovieBrowserFragment();
+
+
+
+            if(findViewById(R.id.movie_detail_container)!= null)
+            {
+                fragment.setTwoPane(true);
+            } else
+            {
+                fragment.setTwoPane(false);
+
+            }
+
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_holder,new MovieBrowserFragment())
+                    .replace(R.id.fragment_holder,fragment)
                     .commit();
 
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //getSupportActionBar().hide();
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        
+
+
+    }
 }
