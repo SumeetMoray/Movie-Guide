@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.sumeet.popularmoviesstage1.MovieDetailActivity;
 import com.example.sumeet.popularmoviesstage1.R;
 import com.example.sumeet.popularmoviesstage1.model.Movie;
@@ -48,7 +49,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     @Override
     public void onBindViewHolder(MoviesViewHolder holder, final int position) {
 
-        Picasso.with(context).load("http://image.tmdb.org/t/p/w185/" + dataset.get(position).getPosterURL()).into(holder.moviePoster);
+        Picasso.with(context).load("http://image.tmdb.org/t/p/w185/" + dataset.get(position).getPosterURL()).placeholder(R.drawable.placeholder).into(holder.moviePoster);
+        //Glide.with(context).load("http://image.tmdb.org/t/p/w185/" + dataset.get(position).getPosterURL()).placeholder(R.drawable.placeholder).into(holder.moviePoster);
 
         holder.moviePoster.setOnClickListener(new View.OnClickListener() {
 

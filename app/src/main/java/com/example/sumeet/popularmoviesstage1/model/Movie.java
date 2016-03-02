@@ -20,11 +20,19 @@ public class Movie {
 
     String originalTitle;
     String posterURL;
+    String backdropImageURL;
     String plotSynopsis;
     Double userRating;
     String releaseDate;
     int movieId;
 
+    public String getBackdropImageURL() {
+        return backdropImageURL;
+    }
+
+    public void setBackdropImageURL(String backdropImageURL) {
+        this.backdropImageURL = backdropImageURL;
+    }
 
     public int getMovieId() {
         return movieId;

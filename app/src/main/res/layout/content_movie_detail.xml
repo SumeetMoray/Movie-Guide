@@ -19,15 +19,6 @@
         android:orientation="vertical">
 
 
-        <TextView
-            android:background="@android:color/darker_gray"
-            android:layout_marginTop="?attr/actionBarSize"
-            android:id="@+id/original_title"
-            android:padding="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Original Title"
-            android:textSize="40sp"/>
 
         <LinearLayout
             android:layout_marginTop="20dp"
@@ -41,6 +32,7 @@
                 android:layout_width="@dimen/image_width"
                 android:layout_height="@dimen/image_height"
                 android:src="@drawable/poster"
+                android:adjustViewBounds="true"
                 android:scaleType="fitXY"/>
 
             <LinearLayout
@@ -49,7 +41,18 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                    <TextView
+                <TextView
+                    android:textColor="@color/colorWhite"
+                    android:background="@android:color/darker_gray"
+                    android:id="@+id/original_title"
+                    android:padding="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Original Title"
+                    android:textSize="20sp"/>
+
+
+                <TextView
                         android:id="@+id/release_date_year"
                         android:textSize="25dp"
                         android:layout_width="match_parent"
@@ -72,6 +75,7 @@
                         android:layout_height="wrap_content"
                         android:text="Vote Average"/>
 
+                <!--
                     <Button
                         android:padding="10dp"
                         android:textColor="@color/colorWhite"
@@ -80,6 +84,7 @@
                         android:layout_height="wrap_content"
                         android:text="Mark As \nFavourite"
                         android:background="@color/colorAccent"/>
+                    -->
 
             </LinearLayout>
         </LinearLayout>
@@ -96,12 +101,18 @@
 
 
         <TextView
-            android:layout_marginTop="20dp"
-            android:layout_width="wrap_content"
+            android:textSize="25dp"
+            android:layout_marginBottom="10dp"
+            android:padding="10dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Trailers      "/>
 
         <TextView
+            android:padding="10dp"
+            android:background="@android:color/darker_gray"
             android:textSize="25dp"
             android:text="Reviews"
             android:layout_width="match_parent"

@@ -1,23 +1,34 @@
 package com.example.sumeet.popularmoviesstage1.fragments;
 
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
@@ -29,16 +40,20 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.sumeet.popularmoviesstage1.R;
 import com.example.sumeet.popularmoviesstage1.VolleySingleton;
 import com.example.sumeet.popularmoviesstage1.model.Movie;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class MovieBrowserFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
-    ArrayList<Movie> dataset = new ArrayList<Movie>();
+    //ArrayList<Movie> dataset;
+    ArrayList<Movie> dataset;
 
     int currentSortOption;
     final int SORT_BY_POPULARITY = 0;
@@ -50,6 +65,7 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
 
     final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
+
 
 
 
@@ -78,6 +94,10 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
     final String isTwoPane_KEY = "isTwoPane";
 
 
+    Toolbar toolbar;
+    AppBarLayout appBarLayout;
+
+
     public boolean isTwoPane() {
         return isTwoPane;
     }
@@ -92,6 +112,8 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
         super.onCreateView(inflater, container, savedInstanceState);
 
+        dataset = Globals.getMovieDataset();
+
         View fragmentView = inflater.inflate(R.layout.activity_movie_browser,null,false);
 
         recyclerView = (RecyclerView) fragmentView.findViewById(R.id.recyclerViewMovies);
@@ -100,6 +122,11 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
         recyclerView.setAdapter(adapter);
 
         layoutManager = new GridLayoutManager(getActivity(), 2);
+
+        toolbar = (Toolbar) fragmentView.findViewById(R.id.toolbar);
+        toolbar.setTitle(getResources().getString(R.string.app_name));
+
+
 
 
 
@@ -122,9 +149,37 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
             }
         }
 
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        if (metrics.widthPixels >= 600 && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT))
+        {
+            layoutManager.setSpanCount(3);
+        }
+
+
+
+
         recyclerView.setLayoutManager(layoutManager);
 
         // bind spinner
+
+
+
+        Log.d("backdropCheck",String.valueOf(dataset.size()));
+
+
+        currentPage = ((dataset.size())/20);
+
+        if(currentPage == 0)
+        {
+            currentPage = 1;
+            makeRequest();
+        }
+
+
+        Log.d("backdropCheck",String.valueOf(dataset.size()) + " : " + String.valueOf(currentPage));
 
 
 
@@ -133,15 +188,27 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                if (layoutManager.findLastVisibleItemPosition()==(dataset.size()-1)) {
+
+
+
+
+
+                if (layoutManager.findLastVisibleItemPosition()>=(dataset.size()-1)) {
 
                     if (currentPage <= (totalPages - 1)) {
+
+                        Log.d("backdropCheck",String.valueOf(dataset.size()) + " : " + String.valueOf(currentPage));
 
                         currentPage = currentPage + 1;
 
                         Snackbar.make(coordinatorLayout,"Loading page : " + String.valueOf(currentPage),Snackbar.LENGTH_SHORT).show();
 
+                            //changeColor();
+
                         makeRequest();
+
+
+
                     }
 
                 }
@@ -159,13 +226,86 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
         sortOptions = (Spinner) fragmentView.findViewById(R.id.spinnerSortOptions);
         sortOptions.setOnItemSelectedListener(this);
 
-        makeRequest();
+
+        if(savedInstanceState == null) {
+            // make a request only if its the first launch
+
+        }
 
         coordinatorLayout = (CoordinatorLayout) fragmentView.findViewById(R.id.coordinatorLayout);
 
 
+        appBarLayout = (AppBarLayout) fragmentView.findViewById(R.id.appBar);
+
+
+
+
+
+
+
         return fragmentView;
     }
+
+
+
+    public void changeColor()
+    {
+
+        if(dataset.size()!=0) {
+
+
+            int min = 1;
+            int max = dataset.size()-1;
+
+            Random r = new Random();
+            int rand = r.nextInt(max - min + 1) + min;
+
+
+            Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w185/" + dataset.get(rand).getPosterURL()).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+
+//                actionBarImage.setImageBitmap(bitmap);
+
+                    Palette palette = Palette.from(bitmap).generate();
+
+
+                    int color = 000000;
+                    int vibrant = palette.getVibrantColor(color);
+                    //int vibrantLight = palette.getLightVibrantColor(default);
+                    int vibrantDark = palette.getDarkVibrantColor(color);
+                    //int muted = palette.getMutedColor(default);
+                    //int mutedLight = palette.getLightMutedColor(default);
+                    //int mutedDark = palette.getDarkMutedColor(default);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                        getActivity().getWindow().setStatusBarColor(vibrantDark);
+
+                    }
+
+                    //collapsingToolbarLayout.setContentScrimColor(vibrant);
+                    appBarLayout.setBackgroundColor(vibrant);
+                    toolbar.setBackgroundColor(vibrant);
+
+
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            });
+
+        }
+    }
+
 
 
     @Override
@@ -240,6 +380,7 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
                         movie.setReleaseDate(movieObject.getString("release_date"));
                         movie.setUserRating(movieObject.getDouble("vote_average"));
                         movie.setMovieId(movieObject.getInt("id"));
+                        movie.setBackdropImageURL(movieObject.getString("backdrop_path"));
 
                         dataset.add(movie);
 
@@ -279,18 +420,42 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
         if(position == 0)
         {
-            currentSortOption = SORT_BY_POPULARITY;
-            dataset.clear();
-            currentPage = 1;
+            if(currentSortOption == SORT_BY_VOTE_AVERAGE)
+            {
+                dataset.clear();
+                currentPage = 1;
 
-            makeRequest();
+                makeRequest();
+                adapter.notifyDataSetChanged();
+
+            }
+
+
+            currentSortOption = SORT_BY_POPULARITY;
+
+
+            //dataset.clear();
+            //currentPage = 1;
+
+            //makeRequest();
 
         }else if(position == 1)
         {
+
+            if(currentSortOption == SORT_BY_POPULARITY)
+            {
+                dataset.clear();
+                currentPage = 1;
+                makeRequest();
+                adapter.notifyDataSetChanged();
+
+            }
+
+
             currentSortOption = SORT_BY_VOTE_AVERAGE;
-            dataset.clear();
-            currentPage = 1;
-            makeRequest();
+            //dataset.clear();
+            //currentPage = 1;
+            //makeRequest();
         }
 
 
