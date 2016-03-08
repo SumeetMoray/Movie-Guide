@@ -5,8 +5,27 @@ package com.example.sumeet.popularmoviesstage1.model;
  */
 public class MovieReview {
 
+    int reviewID; // primary key
+    int movieID; // foreign key
     String authorName;
     String review;
+
+
+    public int getReviewID() {
+        return reviewID;
+    }
+
+    public void setReviewID(int reviewID) {
+        this.reviewID = reviewID;
+    }
+
+    public int getMovieID() {
+        return movieID;
+    }
+
+    public void setMovieID(int movieID) {
+        this.movieID = movieID;
+    }
 
     public String getAuthorName() {
         return authorName;

@@ -13,11 +13,12 @@ import com.example.sumeet.popularmoviesstage1.model.Movie;
 
 public class MainActivity extends AppCompatActivity implements MovieBrowserFragment.fragmentCallback {
 
+    MovieDetailFragment movieDetailFragment;
 
     @Override
     public void movieSelected(Movie movie) {
 
-        MovieDetailFragment movieDetailFragment = new MovieDetailFragment();
+        movieDetailFragment = new MovieDetailFragment();
 
         movieDetailFragment.setMovieForDisplay(movie);
 
@@ -55,19 +56,17 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
 
-
         if(savedInstanceState==null)
         {
 
             MovieBrowserFragment fragment = new MovieBrowserFragment();
-
-
 
             if(findViewById(R.id.movie_detail_container)!= null)
             {
@@ -84,6 +83,18 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
                     .commit();
 
         }
+
+
+        // the if block to ensure when the configuration is changed from portrait to landscape. The Fragment doesnt get
+        // Stuck in the detail fragment.
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+
+            getSupportFragmentManager().popBackStackImmediate();
+        }
+
+
+
+
     }
 
     @Override
@@ -94,11 +105,17 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
 
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        
 
+
+    /*
+    public void notifyDisplayFavourites()
+    {
+
+        movieDetailFragment.displayFavourites();
 
     }
+    */
+
+
+
 }

@@ -1,7 +1,7 @@
 package com.example.sumeet.popularmoviesstage1.fragments;
 
-import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -10,22 +10,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -39,6 +33,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import com.example.sumeet.popularmoviesstage1.R;
 import com.example.sumeet.popularmoviesstage1.VolleySingleton;
+import com.example.sumeet.popularmoviesstage1.data.MoviesContract;
 import com.example.sumeet.popularmoviesstage1.model.Movie;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -58,6 +53,7 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
     int currentSortOption;
     final int SORT_BY_POPULARITY = 0;
     final int SORT_BY_VOTE_AVERAGE = 1;
+    final int SORT_BY_FAVOURITES = 2;
 
     String url="";
 
@@ -127,29 +123,6 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
         toolbar.setTitle(getResources().getString(R.string.app_name));
 
 
-
-
-
-        // restore instance state
-        // an instance state needs to be restored after a configuration change
-        if(savedInstanceState != null) {
-            isTwoPane = savedInstanceState.getBoolean(isTwoPane_KEY, false);
-        }
-
-
-
-        Log.d("TwoPaneCheck",String.valueOf(isTwoPane));
-
-        if(isTwoPane) {
-
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-
-                layoutManager.setSpanCount(1);
-
-            }
-        }
-
-
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
@@ -190,10 +163,10 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
 
 
+                if(currentSortOption != SORT_BY_FAVOURITES)
+                {
 
-
-
-                if (layoutManager.findLastVisibleItemPosition()>=(dataset.size()-1)) {
+                if (layoutManager.findLastVisibleItemPosition()==(dataset.size()-1)) {
 
                     if (currentPage <= (totalPages - 1)) {
 
@@ -205,10 +178,8 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
                             //changeColor();
 
-                        makeRequest();
-
-
-
+                            makeRequest();
+                        }
                     }
 
                 }
@@ -238,13 +209,16 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
         appBarLayout = (AppBarLayout) fragmentView.findViewById(R.id.appBar);
 
 
-
-
-
+        if(sortOptions.getSelectedItemPosition() == 2)
+        {
+            displayFavourites();
+        }
 
 
         return fragmentView;
     }
+
+
 
 
 
@@ -344,6 +318,10 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
             url = builtUri.toString();
 
+        }else if(currentSortOption == SORT_BY_FAVOURITES)
+        {
+            return;
+
         }
 
 
@@ -420,20 +398,16 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
         if(position == 0)
         {
-            if(currentSortOption == SORT_BY_VOTE_AVERAGE)
+            if(currentSortOption == SORT_BY_VOTE_AVERAGE || currentSortOption == SORT_BY_FAVOURITES)
             {
                 dataset.clear();
                 currentPage = 1;
 
+                currentSortOption = SORT_BY_POPULARITY;
                 makeRequest();
                 adapter.notifyDataSetChanged();
 
             }
-
-
-            currentSortOption = SORT_BY_POPULARITY;
-
-
             //dataset.clear();
             //currentPage = 1;
 
@@ -442,24 +416,64 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
         }else if(position == 1)
         {
 
-            if(currentSortOption == SORT_BY_POPULARITY)
+            if(currentSortOption == SORT_BY_POPULARITY || currentSortOption == SORT_BY_FAVOURITES)
             {
                 dataset.clear();
                 currentPage = 1;
+                currentSortOption = SORT_BY_VOTE_AVERAGE;
                 makeRequest();
                 adapter.notifyDataSetChanged();
 
             }
 
 
-            currentSortOption = SORT_BY_VOTE_AVERAGE;
+
             //dataset.clear();
             //currentPage = 1;
             //makeRequest();
+        } else if (position == 2)
+        {
+            currentSortOption = SORT_BY_FAVOURITES;
+
+            displayFavourites();
+
+
+            //MainActivity mainActivity = (MainActivity)getActivity();
+            //mainActivity.notifyDisplayFavourites();
+        }
+
+    }
+
+    public void displayFavourites()
+    {
+        ArrayList<Movie> moviesList = new ArrayList<>();
+
+        dataset.clear();
+
+        Cursor cursor = getContext().getContentResolver().query(MoviesContract.Movie.CONTENT_URI,MoviesContract.Movie.PROJECTION_ALL,null,null,MoviesContract.Movie.SORT_ORDER_DEFAULT);
+
+        while (cursor.moveToNext())
+        {
+            Movie movieForDisplay = new Movie();
+
+            movieForDisplay.setMovieId(cursor.getInt(cursor.getColumnIndex(MoviesContract.Movie.MOVIE_ID)));
+            movieForDisplay.setBackdropImageURL(cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.BACKDROP_IMAGE_URL)));
+            movieForDisplay.setOriginalTitle(cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.ORIGINAL_TITLE)));
+            movieForDisplay.setPlotSynopsis(cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.PLOT_SYNOPSIS)));
+            movieForDisplay.setPosterURL(cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.POSTER_URL)));
+            movieForDisplay.setReleaseDate(cursor.getString(cursor.getColumnIndex(MoviesContract.Movie.RELEASE_DATE)));
+            movieForDisplay.setUserRating((double)cursor.getInt(cursor.getColumnIndex(MoviesContract.Movie.USER_RATING)));
+
+            dataset.add(movieForDisplay);
+        }
+
+        if(cursor.isClosed())
+        {
+            cursor.close();
         }
 
 
-
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -481,19 +495,18 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
     }
 
 
+
     public interface fragmentCallback{
 
         public void movieSelected(Movie movie);
-
-
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
         outState.putBoolean(isTwoPane_KEY , isTwoPane);
-
     }
 
 }

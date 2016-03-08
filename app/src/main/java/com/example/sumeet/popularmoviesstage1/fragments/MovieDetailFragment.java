@@ -1,10 +1,10 @@
 package com.example.sumeet.popularmoviesstage1.fragments;
 
-import android.content.Intent;
+import android.content.ContentValues;
 import android.content.res.ColorStateList;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,14 +12,12 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,9 +25,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.bumptech.glide.Glide;
 import com.example.sumeet.popularmoviesstage1.R;
 import com.example.sumeet.popularmoviesstage1.VolleySingleton;
+import com.example.sumeet.popularmoviesstage1.data.MoviesContract;
 import com.example.sumeet.popularmoviesstage1.model.Movie;
 import com.example.sumeet.popularmoviesstage1.model.MovieReview;
 import com.squareup.picasso.Picasso;
@@ -43,7 +41,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-public class MovieDetailFragment extends Fragment{
+public class MovieDetailFragment extends Fragment implements Target{
+
+    Toolbar toolbar;
+
+    FloatingActionButton fab;
+
+    CollapsingToolbarLayout collapsingToolbarLayout;
+    FloatingActionButton floatingActionButton;
+
 
     ImageView actionBarImage;
 
@@ -58,13 +64,7 @@ public class MovieDetailFragment extends Fragment{
     ArrayList<MovieReview> reviewsList = new ArrayList<>();
 
 
-    public Movie getMovieForDisplay() {
-        return movieForDisplay;
-    }
 
-    public void setMovieForDisplay(Movie movieForDisplay) {
-        this.movieForDisplay = movieForDisplay;
-    }
 
     ImageView moviePoster;
     TextView originalTitle,releaseDate,voteAverage,plotSynopsis,monthAndDay,reviews;
@@ -83,8 +83,19 @@ public class MovieDetailFragment extends Fragment{
             "December"};
 
 
+
+
+
     public MovieDetailFragment() {
         super();
+    }
+
+    public Movie getMovieForDisplay() {
+        return movieForDisplay;
+    }
+
+    public void setMovieForDisplay(Movie movieForDisplay) {
+        this.movieForDisplay = movieForDisplay;
     }
 
     @Nullable
@@ -108,7 +119,7 @@ public class MovieDetailFragment extends Fragment{
 
 
 
-        Toolbar toolbar = (Toolbar) fragmentView.findViewById(R.id.toolbar);
+        toolbar = (Toolbar) fragmentView.findViewById(R.id.toolbar);
 
 
 
@@ -126,29 +137,99 @@ public class MovieDetailFragment extends Fragment{
 
 
 
+        fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
+
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(!checkWetherFavourite()) {
+
+                    ContentValues values = new ContentValues();
+
+                    values.put(MoviesContract.Movie.MOVIE_ID, movieForDisplay.getMovieId());
+                    values.put(MoviesContract.Movie.BACKDROP_IMAGE_URL, movieForDisplay.getBackdropImageURL());
+                    values.put(MoviesContract.Movie.ORIGINAL_TITLE, movieForDisplay.getOriginalTitle());
+                    values.put(MoviesContract.Movie.PLOT_SYNOPSIS, movieForDisplay.getPlotSynopsis());
+                    values.put(MoviesContract.Movie.POSTER_URL, movieForDisplay.getPosterURL());
+                    values.put(MoviesContract.Movie.RELEASE_DATE, movieForDisplay.getReleaseDate());
+                    values.put(MoviesContract.Movie.USER_RATING, movieForDisplay.getUserRating());
+
+                    getActivity().getContentResolver().insert(MoviesContract.Movie.CONTENT_URI, values);
+
+                    fab.setImageResource(R.drawable.ic_favorite_white_24dp);
+
+                }else
+                {
+                    int rowCount = getActivity().getContentResolver().delete(MoviesContract.Movie.CONTENT_URI,
+                            MoviesContract.Movie.MOVIE_ID + " = ?",
+                            new String[]{String.valueOf(movieForDisplay.getMovieId())});
+
+                    if(rowCount == 1)
+                    {
+                        fab.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+                    }
+
+                }
+
+            }
+        });
+
+
+        collapsingToolbarLayout = (CollapsingToolbarLayout) fragmentView.findViewById(R.id.collapsingToolbar);
+        floatingActionButton = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
+
+
+        checkWetherFavourite();
+        displayMovie();
+
+        return  fragmentView;
+    }
+
+
+    public boolean checkWetherFavourite()
+    {
+        if(movieForDisplay!=null) {
+
+            Cursor cursor = getActivity().getContentResolver().query(
+                    MoviesContract.Movie.CONTENT_URI,
+                    MoviesContract.Movie.PROJECTION_ALL,
+                    MoviesContract.Movie.MOVIE_ID + " = ?",
+                    new String[]{String.valueOf(movieForDisplay.getMovieId())},
+                    null);
+
+            Log.d("cursorCount", String.valueOf(cursor.getCount()));
+
+            if (cursor.getCount() == 1) {
+                fab.setImageResource(R.drawable.ic_favorite_white_24dp);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+
+    public void displayMovie()
+    {
+
         if(movieForDisplay!=null) {
 
 
 
             toolbar.setTitle(movieForDisplay.getOriginalTitle());
-           // Log.d("backdropCheck",movieForDisplay.getBackdropImageURL());
-
-            //Glide.with(getActivity()).load("http://image.tmdb.org/t/p/w342/" + movieForDisplay.getBackdropImageURL()).placeholder(R.drawable.images).into(actionBarImage);
-
-
 
             Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w342/" + movieForDisplay.getBackdropImageURL()).placeholder(R.drawable.images).into(actionBarImage);
+
             Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w185/" + movieForDisplay.getPosterURL()).into(moviePoster);
             originalTitle.setText(movieForDisplay.getOriginalTitle());
             //releaseDate.setText(movieForDisplay.getReleaseDate());
             voteAverage.setText(String.valueOf(movieForDisplay.getUserRating()) + " / 10");
             plotSynopsis.setText(movieForDisplay.getPlotSynopsis());
 
-
-
-
             SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd");
-
 
             try {
 
@@ -164,80 +245,7 @@ public class MovieDetailFragment extends Fragment{
             }
 
 
-            final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) fragmentView.findViewById(R.id.collapsingToolbar);
-            final FloatingActionButton floatingActionButton = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
-
-
-
-            Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w342/" + movieForDisplay.getBackdropImageURL()).placeholder(R.drawable.images).into(new Target() {
-
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-
-                    //actionBarImage.setImageBitmap(bitmap);
-
-                    Palette palette = Palette.from(bitmap).generate();
-
-
-                    int color = 000000;
-                    int vibrant = palette.getVibrantColor(color);
-                    int vibrantLight = palette.getLightVibrantColor(color);
-                    int vibrantDark = palette.getDarkVibrantColor(color);
-                    int muted = palette.getMutedColor(color);
-                    int mutedLight = palette.getLightMutedColor(color);
-                    int mutedDark = palette.getDarkMutedColor(color);
-
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                        getActivity().getWindow().setStatusBarColor(vibrantDark);
-                        floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(vibrantDark));
-                        originalTitle.setBackgroundColor(vibrantDark);
-                        //originalTitle.setTextColor(000000);
-                    }
-
-                    collapsingToolbarLayout.setContentScrimColor(vibrant);
-
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                }
-            });
-
-
-            /*
-
-            actionBarImage.getti
-            mBackdrop.setResponseObserver(new PaletteNetworkImageView.ResponseObserver() {
-                @Override
-                public void onSuccess() {
-
-
-                    int colorDark = mBackdrop.getDarkVibrantColor();
-                    int colorLight = mBackdrop.getVibrantColor();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                        getActivity().getWindow().setStatusBarColor(colorDark);
-                        fab.setBackgroundTintList(ColorStateList.valueOf(colorDark));
-                    }
-                    mCollapsingToolbarLayout.setContentScrimColor(colorLight);
-                }
-
-                @Override
-                public void onError() {
-
-                }
-            });
-
-            */
-
+            Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w342/" + movieForDisplay.getBackdropImageURL()).placeholder(R.drawable.images).into(this);
 
             makeRequest();
             makeRequestTrailers();
@@ -245,9 +253,6 @@ public class MovieDetailFragment extends Fragment{
         }
 
 
-
-
-        return  fragmentView;
     }
 
 
@@ -403,5 +408,51 @@ public class MovieDetailFragment extends Fragment{
 
 
     }
+
+
+    @Override
+    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+            //actionBarImage.setImageBitmap(bitmap);
+
+            Palette palette = Palette.from(bitmap).generate();
+
+            int color = 000000;
+            int vibrant = palette.getVibrantColor(color);
+            int vibrantLight = palette.getLightVibrantColor(color);
+            int vibrantDark = palette.getDarkVibrantColor(color);
+            int muted = palette.getMutedColor(color);
+            int mutedLight = palette.getLightMutedColor(color);
+            int mutedDark = palette.getDarkMutedColor(color);
+
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                getActivity().getWindow().setStatusBarColor(vibrantDark);
+                //originalTitle.setTextColor(000000);
+            }
+
+            floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(vibrantDark));
+            originalTitle.setBackgroundColor(vibrantDark);
+            collapsingToolbarLayout.setContentScrimColor(vibrant);
+
+
+            //actionBarImage.setImageBitmap(bitmap);
+
+    }
+
+
+
+    @Override
+    public void onBitmapFailed(Drawable errorDrawable) {
+
+    }
+
+    @Override
+    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+    }
+
+
 
 }

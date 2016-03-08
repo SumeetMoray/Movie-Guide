@@ -5,6 +5,7 @@
     <string-array name="sortOptions">
         <item>Popularity</item>
         <item>HighestRated</item>
+        <item>Favourites</item>
     </string-array>
     <string name="title_activity_movie_detail">Movie Details</string>
     <string name="title_activity_main">Popular Movies</string>

@@ -1,4 +1,4 @@
-package com.example.sumeet.popularmoviesstage1;
+package com.example.sumeet.popularmoviesstage1.discardedClasses;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +11,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.sumeet.popularmoviesstage1.R;
+import com.example.sumeet.popularmoviesstage1.VolleySingleton;
 import com.example.sumeet.popularmoviesstage1.model.Movie;
 import com.example.sumeet.popularmoviesstage1.model.MovieReview;
 import com.squareup.picasso.Picasso;

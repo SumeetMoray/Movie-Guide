@@ -11,19 +11,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MovieBrowser"
+            android:name=".discardedClasses.MovieBrowser"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
         <activity
-            android:name=".MovieDetailActivity"
+            android:name=".discardedClasses.MovieDetailActivity"
             android:label="@string/title_activity_movie_detail"
-            android:parentActivityName=".MovieBrowser"
+            android:parentActivityName=".discardedClasses.MovieBrowser"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.sumeet.popularmoviesstage1.MovieBrowser" />
+                android:value=".discardedClasses.MovieBrowser" />
         </activity>
         <activity
             android:name=".fragments.MainActivity"
@@ -38,6 +38,16 @@
 
 
         </activity>
+
+        <provider
+            android:name=".data.MoviesContentProvider"
+            android:authorities="org.rhythmsofnature.popularmovies"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:label="MoviesContentProvider"
+            android:readPermission="org.rhythmsofnature.popularmovies.READ"
+            android:writePermission="org.rhythmsofnature.popularmovies.WRITE" />
     </application>
+
 
 </manifest>

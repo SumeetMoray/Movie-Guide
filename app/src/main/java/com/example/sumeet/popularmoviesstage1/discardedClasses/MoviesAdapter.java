@@ -1,4 +1,4 @@
-package com.example.sumeet.popularmoviesstage1;
+package com.example.sumeet.popularmoviesstage1.discardedClasses;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.sumeet.popularmoviesstage1.R;
 import com.example.sumeet.popularmoviesstage1.model.Movie;
 import com.squareup.picasso.Picasso;
 

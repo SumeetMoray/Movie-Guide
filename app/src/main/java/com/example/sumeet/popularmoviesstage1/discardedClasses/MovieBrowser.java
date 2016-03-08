@@ -1,4 +1,4 @@
-package com.example.sumeet.popularmoviesstage1;
+package com.example.sumeet.popularmoviesstage1.discardedClasses;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +18,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.sumeet.popularmoviesstage1.R;
+import com.example.sumeet.popularmoviesstage1.VolleySingleton;
 import com.example.sumeet.popularmoviesstage1.model.Movie;
 
 import org.json.JSONArray;
@@ -33,6 +35,7 @@ public class MovieBrowser extends AppCompatActivity implements AdapterView.OnIte
     int currentSortOption;
     final int SORT_BY_POPULARITY = 0;
     final int SORT_BY_VOTE_AVERAGE = 1;
+    final int SORT_BY_FAVOURITES = 2;
 
     String url="";
 
@@ -113,6 +116,8 @@ public class MovieBrowser extends AppCompatActivity implements AdapterView.OnIte
         sortOptions.setOnItemSelectedListener(this);
 
         makeRequest();
+
+
 
 
 
@@ -261,6 +266,7 @@ public class MovieBrowser extends AppCompatActivity implements AdapterView.OnIte
             currentPage = 1;
             makeRequest();
         }
+
 
 
 
