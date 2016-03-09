@@ -23,9 +23,6 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
         movieDetailFragment.setMovieForDisplay(movie);
 
 
-
-
-
         // Two pane case
         // && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
 
@@ -59,8 +56,14 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+
         //setSupportActionBar(toolbar);
+
+
+
+
 
 
         if(savedInstanceState==null)

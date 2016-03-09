@@ -16,6 +16,9 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -105,6 +108,10 @@ public class MovieDetailFragment extends Fragment implements Target{
         super.onCreateView(inflater, container, savedInstanceState);
 
 
+
+        setHasOptionsMenu(true);
+
+
         View fragmentView = inflater.inflate(R.layout.activity_movie_detail,container,false);
 
 
@@ -180,6 +187,16 @@ public class MovieDetailFragment extends Fragment implements Target{
         collapsingToolbarLayout = (CollapsingToolbarLayout) fragmentView.findViewById(R.id.collapsingToolbar);
         floatingActionButton = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
 
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                getActivity().getSupportFragmentManager().popBackStackImmediate();
+            }
+        });
+
+        toolbar.inflateMenu(R.menu.menu_movie_browser);
 
         checkWetherFavourite();
         displayMovie();
@@ -454,5 +471,16 @@ public class MovieDetailFragment extends Fragment implements Target{
     }
 
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
 
+        inflater.inflate(R.menu.menu_movie_browser, menu);
+
+        //MenuItem item = menu.add("Fav");
+
+        //item.setIcon(R.drawable.ic_favorite_white_24dp);
+
+
+    }
 }
