@@ -35,7 +35,7 @@ Favouriting a Movie by pressing the Floating Heart Button
 Making a movie selection with the Spinner
 
 
-##Download Links:
+##Download Link:
 
 * [Movie-Guide] (https://raw.githubusercontent.com/SumeetMoray/Movie-Guide/master/app/app-release.apk)
 
