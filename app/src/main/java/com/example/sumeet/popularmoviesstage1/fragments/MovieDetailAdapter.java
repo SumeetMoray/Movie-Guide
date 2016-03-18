@@ -62,6 +62,30 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         if(viewType == 1)
         {
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_movie_trailer,null,false);
+
+            RecyclerView.ViewHolder viewHolder = new ViewHolderMovieTrailers(itemView);
+
+            return viewHolder;
+        }
+
+
+
+
+
+        /*
+        if(viewType ==3)
+        {
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_review_title,null,false);
+
+            RecyclerView.ViewHolder viewHolder = new ViewHolderReviewTitle(itemView);
+        }
+        */
+
+
+
+        if(viewType == 2)
+        {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_movie_review,null,false);
 
             RecyclerView.ViewHolder viewHolder = new ViewHolderMovieReviews(itemView);
@@ -70,14 +94,6 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         }
 
-        if(viewType == 2)
-        {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_movie_trailer,null,false);
-
-            RecyclerView.ViewHolder viewHolder = new ViewHolderMovieTrailers(itemView);
-
-            return viewHolder;
-        }
 
         return null;
     }
@@ -93,20 +109,11 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         }
 
-        if(getItemViewType(position)==1)
-        {
-            ViewHolderMovieReviews viewHolder = (ViewHolderMovieReviews) holder;
-
-            viewHolder.authorName.setText("Review By : " + movieReviewsDataset.get(position-1).getAuthor());
-            viewHolder.review.setText(movieReviewsDataset.get(position-1).getContent());
-
-        }
-
-        if(getItemViewType(position) ==2)
+        if(getItemViewType(position) ==1)
         {
             ViewHolderMovieTrailers viewHolder = (ViewHolderMovieTrailers) holder;
 
-            final int itemPosition =  position-1-movieReviewsDataset.size();
+            final int itemPosition =  position-1;
 
             viewHolder.trailerName.setText(movieTrailerList.get(itemPosition).getName());
             Picasso.with(context)
@@ -126,6 +133,28 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
 
+        if(getItemViewType(position)==2)
+        {
+           // int itemPositionTitle = position-1-movieTrailerList.size();
+           // ViewHolderReviewTitle holderReviewTitle = (ViewHolderReviewTitle) holder;
+           // holderReviewTitle.reviewsTitle.setBackgroundColor(titleColor);
+
+        }
+
+
+        if(getItemViewType(position)==2)
+        {
+            ViewHolderMovieReviews viewHolder = (ViewHolderMovieReviews) holder;
+
+
+            int itemPositionReviews = position-1-movieTrailerList.size();
+            viewHolder.authorName.setText("Review By : " + movieReviewsDataset.get(itemPositionReviews).getAuthor());
+            viewHolder.review.setText(movieReviewsDataset.get(itemPositionReviews).getContent());
+
+        }
+
+
+
     }
 
     @Override
@@ -142,19 +171,38 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         {
             return 0;
         }
-        if((position > 0)&& (position <= (1 + movieReviewsDataset.size()-1)))
+
+
+        if((position > 0)&& (position <= (1 + movieTrailerList.size()-1)))
         {
             return 1;
 
         }
 
-        if ((position > (1+movieReviewsDataset.size() -1)) && (position <= (1 + movieReviewsDataset.size() + movieTrailerList.size()-1)))
+        //if(position == (1+movieTrailerList.size()+1-1))
+        //{
+          //  return 2;
+        //}
+
+        if ((position > (1+movieTrailerList.size()-1)) && (position <= (1 + movieTrailerList.size() + movieReviewsDataset.size() -1)))
         {
             return 2;
         }
 
+
+        /*
+        if(position == (1 + movieTrailerList.size() + movieReviewsDataset.size() + 1 -1))
+        {
+            return 3;
+        }
+        */
+
+
         return 0;
     }
+
+
+
 
     public class ViewHolderMovieDetails extends RecyclerView.ViewHolder{
 
@@ -181,8 +229,6 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         @Bind(R.id.trailersTitle)
         TextView trailersTitle;
 
-        @Bind(R.id.reviewsTitle)
-        TextView reviewsTitle;
 
 
 
@@ -219,6 +265,19 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
+    public class ViewHolderReviewTitle extends RecyclerView.ViewHolder{
+
+
+        @Bind(R.id.reviewsTitle)
+        TextView reviewsTitle;
+
+        public ViewHolderReviewTitle(View itemView) {
+            super(itemView);
+
+            ButterKnife.bind(this,itemView);
+        }
+    }
+
 
 
     public class ViewHolderMovieTrailers extends RecyclerView.ViewHolder{
@@ -237,6 +296,9 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 
+
+
+
     public void displayMovieContent(ViewHolderMovieDetails holder)
     {
 
@@ -252,7 +314,7 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         {
             holder.originalTitle.setBackgroundColor(titleColor);
             holder.trailersTitle.setBackgroundColor(colorVibrant);
-            holder.reviewsTitle.setBackgroundColor(colorVibrant);
+            //holder.reviewsTitle.setBackgroundColor(colorVibrant);
         }
 
 
@@ -283,6 +345,7 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         titleColor = vibrantDark;
         colorVibrant = vibrant;
         notifyItemChanged(0);
+
     }
 
 }

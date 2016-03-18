@@ -409,7 +409,7 @@ public class MovieDetailFragment extends Fragment implements Target{
 
             Palette palette = Palette.from(bitmap).generate();
 
-            int color = getResources().getColor(R.color.colorAccent);
+            int color = 323235;
             int vibrant = palette.getVibrantColor(color);
             int vibrantLight = palette.getLightVibrantColor(color);
             int vibrantDark = palette.getDarkVibrantColor(color);
@@ -433,6 +433,7 @@ public class MovieDetailFragment extends Fragment implements Target{
             }
 
             fab.setBackgroundTintList(ColorStateList.valueOf(vibrantDark));
+            //fab.setBackgroundColor(vibrantDark);
 
             //originalTitle.setBackgroundColor(vibrantDark);
 

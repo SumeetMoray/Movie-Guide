@@ -111,17 +111,9 @@
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Trailers      "/>
+            android:text="Trailers and Reviews"/>
 
-        <TextView
-            android:textColor="@color/colorWhite"
-            android:id="@+id/reviewsTitle"
-            android:padding="10dp"
-            android:background="@android:color/darker_gray"
-            android:textSize="25dp"
-            android:text="Reviews"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+
 
         <!--
         <TextView
