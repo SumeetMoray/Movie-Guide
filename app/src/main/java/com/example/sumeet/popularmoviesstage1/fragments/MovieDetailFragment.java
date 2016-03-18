@@ -73,8 +73,6 @@ public class MovieDetailFragment extends Fragment implements Target{
     @Bind(R.id.collapsingToolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
 
-
-
     @Bind(R.id.actionBarImage)
     ImageView actionBarImage;
 
@@ -154,36 +152,6 @@ public class MovieDetailFragment extends Fragment implements Target{
 
         movieReviewsList.setLayoutManager(new GridLayoutManager(getActivity(),1));
 
-        //movieReviewsList.setNestedScrollingEnabled(true);
-
-
-        //setHasOptionsMenu(true);
-
-
-
-
-
-
-        //toolbar = (Toolbar) fragmentView.findViewById(R.id.toolbar);
-        //moviePoster = (ImageView) fragmentView.findViewById(R.id.movie_poster);
-        //releaseDate = (TextView) fragmentView.findViewById(R.id.release_date_year);
-        //voteAverage = (TextView) fragmentView.findViewById(R.id.vote_average);
-        //plotSynopsis = (TextView) fragmentView.findViewById(R.id.plotSynopsis);
-        //monthAndDay = (TextView) fragmentView.findViewById(R.id.month_day);
-
-        //originalTitle = (TextView) fragmentView.findViewById(R.id.original_title);
-
-        //reviews = (TextView) fragmentView.findViewById(R.id.reviews);
-        //actionBarImage = (ImageView) fragmentView.findViewById(R.id.actionBarImage);
-
-        //collapsingToolbarLayout = (CollapsingToolbarLayout) fragmentView.findViewById(R.id.collapsingToolbar);
-
-
-        //fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
-
-
-
-
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -202,10 +170,6 @@ public class MovieDetailFragment extends Fragment implements Target{
 
 
 
-
-
-
-
         return  fragmentView;
     }
 
@@ -218,10 +182,10 @@ public class MovieDetailFragment extends Fragment implements Target{
         {
 
             if(movieForDisplay!=null) {
-                makeRequestReviewsRetrofit();
-                //makeRequestTrailers();
 
-                makeRequestTrailersRetrofit();
+                makeRequestReviews();
+
+                makeRequestTrailers();
             }
 
 
@@ -277,8 +241,9 @@ public class MovieDetailFragment extends Fragment implements Target{
 
 
 
+    /*
     // request reviews
-    public void makeRequestReviews()
+    public void makeRequestReviewsVolley()
     {
 
         String url = BASE_URL + movieForDisplay.getMovieId() + "/reviews";
@@ -318,6 +283,7 @@ public class MovieDetailFragment extends Fragment implements Target{
                     movieDetailAdapter.notifyDataSetChanged();
 
 
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -337,7 +303,12 @@ public class MovieDetailFragment extends Fragment implements Target{
 
     }
 
-    public void makeRequestTrailers()
+
+
+    // Making request using volley. Commented Out !!
+
+
+    public void makeRequestTrailersVolley()
     {
         //http://api.themoviedb.org/3/movie/281957/videos?api_key=65d0d0521287ca89086b923344334318
 
@@ -397,11 +368,14 @@ public class MovieDetailFragment extends Fragment implements Target{
 
         VolleySingleton.getInstance(getActivity()).addToRequestQueue(request);
     }
+    */
 
 
 
 
 
+
+    // obtaining colors dynamically from the backdrop image poster
     @Override
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
 
@@ -460,23 +434,8 @@ public class MovieDetailFragment extends Fragment implements Target{
 
 
 
-    /*
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-
-        inflater.inflate(R.menu.menu_movie_browser, menu);
-
-        //MenuItem item = menu.add("Fav");
-
-        //item.setIcon(R.drawable.ic_favorite_white_24dp);
-    }
-
-    */
-
-
-
-    public void makeRequestReviewsRetrofit()
+    // Making request for obtaining Reviews
+    public void makeRequestReviews()
     {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL_API)
@@ -513,7 +472,7 @@ public class MovieDetailFragment extends Fragment implements Target{
 
     }
 
-    public void makeRequestTrailersRetrofit()
+    public void makeRequestTrailers()
     {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL_API)
@@ -550,6 +509,7 @@ public class MovieDetailFragment extends Fragment implements Target{
 
 
 
+    // when the fab is clicked mark the movie as favourite and store it into the database
     @OnClick(R.id.fab)
     public void markMovieAsFavourite()
     {
@@ -593,6 +553,7 @@ public class MovieDetailFragment extends Fragment implements Target{
     public void onDestroy() {
         super.onDestroy();
 
+        // unbind the butterknife library
         ButterKnife.unbind(this);
     }
 }

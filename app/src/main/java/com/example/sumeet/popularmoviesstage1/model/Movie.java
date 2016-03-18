@@ -1,5 +1,6 @@
 package com.example.sumeet.popularmoviesstage1.model;
 
+import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.Date;
@@ -7,19 +8,8 @@ import java.util.Date;
 /**
  * Created by sumeet on 21/10/15.
  */
-public class Movie{
+public class Movie implements Parcelable{
 
-
-    public static String END_POINT_URL = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=65d0d0521287ca89086b923344334318";
-
-
-    // Keys for passing data from one activity to another using intents
-    //public static final String ORIGINAL_TITLE_KEY = "OriginalTitle";
-    //public static final String POSTER_URL_KEY = "PosterURL";
-    //public static final String PLOT_SYNOPSIS_KEY = "PlotSynopsis";
-    //public static final String USER_RATING_KEY = "UserRating";
-    //public static final String RELEASE_DATE_KEY = "ReleaseDate";
-    //public static final String MOVIE_ID_KEY = "MovieId";
 
 
     String originalTitle;
@@ -29,6 +19,45 @@ public class Movie{
     Double userRating;
     String releaseDate;
     int movieId;
+
+    protected Movie(Parcel in) {
+        originalTitle = in.readString();
+        posterURL = in.readString();
+        backdropImageURL = in.readString();
+        plotSynopsis = in.readString();
+        releaseDate = in.readString();
+        movieId = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(originalTitle);
+        dest.writeString(posterURL);
+        dest.writeString(backdropImageURL);
+        dest.writeString(plotSynopsis);
+        dest.writeString(releaseDate);
+        dest.writeInt(movieId);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+
+
+
 
     public String getBackdropImageURL() {
         return backdropImageURL;

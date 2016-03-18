@@ -5,24 +5,9 @@
 
     <item
         android:id = "@+id/action_share"
-        android:icon = "@drawable/ic_favorite_white_24dp"
+        android:icon = "@drawable/ic_share_white_24dp"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="always"/>
-
-
-    <item
-        android:id="@+id/action_menuitem1"
-        android:orderInCategory="100"
-        android:title="@string/title_activity_main"
-        android:icon = "@drawable/ic_arrow_back_white_24dp"
-        app:showAsAction="collapseActionView" />
-
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        android:icon="@drawable/ic_favorite_border_white_24dp"
-        app:showAsAction="ifRoom" />
 
 </menu>

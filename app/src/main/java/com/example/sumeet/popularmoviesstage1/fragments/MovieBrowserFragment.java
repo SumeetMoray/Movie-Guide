@@ -53,7 +53,7 @@ import butterknife.OnItemClick;
 public class MovieBrowserFragment extends Fragment implements AdapterView.OnItemSelectedListener , Target{
 
 
-    ArrayList<Movie> dataset;
+    ArrayList<Movie> dataset = new ArrayList<>();
 
     int currentSortOption;
     final int SORT_BY_POPULARITY = 0;
@@ -134,12 +134,6 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
         //toolbar = (Toolbar) fragmentView.findViewById(R.id.toolbar);
         //sortOptions = (Spinner) fragmentView.findViewById(R.id.spinnerSortOptions);
-
-
-
-
-        dataset = Globals.getMovieDataset();
-
 
 
         adapter = new MoviesAdapter(dataset,getActivity(),this);
@@ -261,6 +255,7 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
 
 
+    /*
 
     public void changeColor()
     {
@@ -280,6 +275,7 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
         }
     }
 
+    */
 
 
     void makeRequest()
@@ -471,6 +467,7 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
 
 
+    // A callback mechanism for communicating the event and transferring the movie to the movie detail fragment
     public void movieSelected(Movie movie) {
 
 
