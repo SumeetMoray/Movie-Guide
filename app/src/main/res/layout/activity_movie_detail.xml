@@ -79,7 +79,7 @@
         android:id="@+id/fab"
         app:fabSize="normal"
         app:elevation="6dp"
-        app:pressedTranslationZ="12dp"
+        app:pressedTranslationZ="6dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_anchor="@id/appBar"

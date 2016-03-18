@@ -9,6 +9,7 @@
     </string-array>
     <string name="title_activity_movie_detail">Movie Details</string>
     <string name="title_activity_main">Popular Movies</string>
+    <string name="send_to">Share Movie Via ...</string>
 
 
 </resources>

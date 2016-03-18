@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
         // Two pane case
         // && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
 
+
         if((findViewById(R.id.movie_detail_container)!= null) )
         {
             getSupportFragmentManager()
@@ -63,21 +64,38 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
         if(savedInstanceState==null)
         {
 
+
             MovieBrowserFragment fragment = new MovieBrowserFragment();
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_holder,fragment)
+                    .commit();
+
+
 
             if(findViewById(R.id.movie_detail_container)!= null)
             {
                 //fragment.setTwoPane(true);
+
+                movieDetailFragment = new MovieDetailFragment();
+
+                movieDetailFragment.setMovieForDisplay(null);
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.movie_detail_container,movieDetailFragment)
+                        .commit();
+
+
+
+
             } else
             {
                 //fragment.setTwoPane(false);
 
             }
 
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_holder,fragment)
-                    .commit();
 
         }
 

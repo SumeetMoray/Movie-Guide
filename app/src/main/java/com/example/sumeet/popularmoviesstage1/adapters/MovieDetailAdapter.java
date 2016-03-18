@@ -1,9 +1,12 @@
-package com.example.sumeet.popularmoviesstage1.fragments;
+package com.example.sumeet.popularmoviesstage1.adapters;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
+import android.text.style.TtsSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,13 +136,13 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
 
-        if(getItemViewType(position)==2)
-        {
+        //if(getItemViewType(position)==2)
+        //{
            // int itemPositionTitle = position-1-movieTrailerList.size();
            // ViewHolderReviewTitle holderReviewTitle = (ViewHolderReviewTitle) holder;
            // holderReviewTitle.reviewsTitle.setBackgroundColor(titleColor);
 
-        }
+        //}
 
 
         if(getItemViewType(position)==2)
@@ -265,6 +268,9 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
+
+
+    // view holder unused
     public class ViewHolderReviewTitle extends RecyclerView.ViewHolder{
 
 
@@ -318,20 +324,35 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
 
-        SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd");
+            String[] months = {"January",
+                    "February",
+                    "March",
+                    "April",
+                    "May",
+                    "June",
+                    "July",
+                    "August",
+                    "September",
+                    "October",
+                    "November",
+                    "December"};
 
-        try {
-
-            java.util.Date dDate = sdf.parse(movieForDisplay.getReleaseDate());
-
-            holder.releaseDate.setText(String.valueOf(dDate.getYear()+1900));
-
-            //monthAndDay.setText(months[dDate.getMonth()-1] + " " + String.valueOf(dDate.getDay()));
 
 
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+            String date = movieForDisplay.getReleaseDate();
+
+
+            if(date.length()>=10) {
+
+                String year = date.substring(0, 4);
+                String month = date.substring(5, 7);
+                String day = date.substring(8, 10);
+
+
+                holder.releaseDate.setText(year);
+                holder.monthAndDay.setText(months[Integer.parseInt(month) - 1] + " : " + day);
+
+            }
 
         }
 

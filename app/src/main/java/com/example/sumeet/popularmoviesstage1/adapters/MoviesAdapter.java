@@ -1,4 +1,4 @@
-package com.example.sumeet.popularmoviesstage1.fragments;
+package com.example.sumeet.popularmoviesstage1.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.sumeet.popularmoviesstage1.R;
+import com.example.sumeet.popularmoviesstage1.fragments.MovieBrowserFragment;
 import com.example.sumeet.popularmoviesstage1.model.Movie;
 import com.squareup.picasso.Picasso;
 

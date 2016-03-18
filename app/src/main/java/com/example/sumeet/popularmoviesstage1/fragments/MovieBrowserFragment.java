@@ -16,7 +16,6 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -34,6 +33,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 
 import com.example.sumeet.popularmoviesstage1.R;
 import com.example.sumeet.popularmoviesstage1.VolleySingleton;
+import com.example.sumeet.popularmoviesstage1.adapters.MoviesAdapter;
 import com.example.sumeet.popularmoviesstage1.data.MoviesContract;
 import com.example.sumeet.popularmoviesstage1.model.Movie;
 import com.squareup.picasso.Picasso;
@@ -44,11 +44,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnItemClick;
 
 public class MovieBrowserFragment extends Fragment implements AdapterView.OnItemSelectedListener , Target{
 

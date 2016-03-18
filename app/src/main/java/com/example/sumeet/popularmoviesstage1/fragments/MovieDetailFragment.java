@@ -1,6 +1,7 @@
 package com.example.sumeet.popularmoviesstage1.fragments;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -12,18 +13,22 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
+
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -33,6 +38,7 @@ import com.example.sumeet.popularmoviesstage1.R;
 import com.example.sumeet.popularmoviesstage1.ServiceContract.MovieReviewsService;
 import com.example.sumeet.popularmoviesstage1.ServiceContract.MovieTrailersService;
 import com.example.sumeet.popularmoviesstage1.VolleySingleton;
+import com.example.sumeet.popularmoviesstage1.adapters.MovieDetailAdapter;
 import com.example.sumeet.popularmoviesstage1.data.MoviesContract;
 import com.example.sumeet.popularmoviesstage1.model.Movie;
 import com.example.sumeet.popularmoviesstage1.model.MovieReview;
@@ -46,8 +52,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,26 +101,6 @@ public class MovieDetailFragment extends Fragment implements Target{
 
 
 
-
-
-
-
-    String[] months = {"January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"};
-
-
-
-
     // default constructor
 
     public MovieDetailFragment() {
@@ -133,6 +117,8 @@ public class MovieDetailFragment extends Fragment implements Target{
     public void setMovieForDisplay(Movie movieForDisplay) {
         this.movieForDisplay = movieForDisplay;
     }
+
+    private ShareActionProvider mShareActionProvider;
 
     @Nullable
     @Override
@@ -162,9 +148,17 @@ public class MovieDetailFragment extends Fragment implements Target{
             }
         });
 
+
+
+
+        setHasOptionsMenu(true);
         toolbar.inflateMenu(R.menu.menu_movie_browser);
 
 
+        //shareAction();
+
+
+        checkWetherFavourite();
         updateTitleAndBackdrop();
         loadTrailersAndReviews();
 
@@ -174,27 +168,71 @@ public class MovieDetailFragment extends Fragment implements Target{
     }
 
 
+    public void shareAction()
+    {
+        String movieInfo = "Movie Name : " + movieForDisplay.getOriginalTitle()
+                + "\n" + "Release Date : " + movieForDisplay.getReleaseDate()
+                + "\n" + "User Rating : " + movieForDisplay.getUserRating()
+                + "\n" + "Movie Plot : \n" + movieForDisplay.getPlotSynopsis()
+                + "\n\n" + "Source : http://www.tmdb.com" ;
+
+
+        String firstTrailerURL="";
+
+
+        if(movieTrailersList.size()>0) {
+            firstTrailerURL = "https://www.youtube.com/watch?v=" + movieTrailersList.get(0).getKey();
+        }
+
+
+        Intent sendIntent = new Intent();
+
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, firstTrailerURL);
+
+
+
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT,"A movie recommendation !!");
+
+        sendIntent.setType("text/plain");
+
+
+
+        if(movieTrailersList.size()>0) {
+
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://www.youtube.com/watch?v=" + movieTrailersList.get(0).getKey()));
+
+        }
+
+
+        ShareActionProvider mShareActionProvider = new ShareActionProvider(getActivity());
+
+        mShareActionProvider.setShareIntent(sendIntent);
+
+        MenuItem item = toolbar.getMenu().findItem(R.id.action_share);
+        MenuItemCompat.setActionProvider(item, mShareActionProvider);
+    }
+
+
+
+
 
     public void loadTrailersAndReviews()
     {
 
-        if(!checkWetherFavourite())
-        {
+        //if(!checkWetherFavourite())
+        //{
 
             if(movieForDisplay!=null) {
 
                 makeRequestReviews();
 
                 makeRequestTrailers();
+
+                //makeRequestReviewsVolley();
+                //makeRequestTrailersVolley();
             }
-
-
-        }else
-        {
-
-        }
-
-
     }
 
 
@@ -241,7 +279,7 @@ public class MovieDetailFragment extends Fragment implements Target{
 
 
 
-    /*
+
     // request reviews
     public void makeRequestReviewsVolley()
     {
@@ -308,6 +346,7 @@ public class MovieDetailFragment extends Fragment implements Target{
     // Making request using volley. Commented Out !!
 
 
+
     public void makeRequestTrailersVolley()
     {
         //http://api.themoviedb.org/3/movie/281957/videos?api_key=65d0d0521287ca89086b923344334318
@@ -342,14 +381,25 @@ public class MovieDetailFragment extends Fragment implements Target{
 
                         JSONObject result = resultsArray.getJSONObject(i);
 
-                        String key = result.getString("key");
+
+                        MovieTrailer trailer = new MovieTrailer();
+
+                        trailer.setKey(result.getString("key"));
+
+                        trailer.setName(result.getString("name"));
+
 
 //                                startActivity(new Intent(
   //                              Intent.ACTION_VIEW,
     //                            Uri.parse("https://www.youtube.com/watch?v=" + key)));
 
+
+                        movieTrailersList.add(trailer);
                     }
 
+                    shareAction();
+
+                    movieDetailAdapter.notifyDataSetChanged();
 
 
 
@@ -368,7 +418,7 @@ public class MovieDetailFragment extends Fragment implements Target{
 
         VolleySingleton.getInstance(getActivity()).addToRequestQueue(request);
     }
-    */
+
 
 
 
@@ -495,7 +545,11 @@ public class MovieDetailFragment extends Fragment implements Target{
 
                 movieTrailersList.addAll(trailerList);
 
+                shareAction();
+
                 movieDetailAdapter.notifyDataSetChanged();
+
+
 
             }
 

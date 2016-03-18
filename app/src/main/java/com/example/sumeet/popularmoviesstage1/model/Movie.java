@@ -20,6 +20,10 @@ public class Movie implements Parcelable{
     String releaseDate;
     int movieId;
 
+
+    public Movie() {
+    }
+
     protected Movie(Parcel in) {
         originalTitle = in.readString();
         posterURL = in.readString();
