@@ -30,10 +30,6 @@ public class MoviesContentProvider extends ContentProvider{
         URI_MATCHER.addURI(MoviesContract.AUTHORITY,"movieDetails",MOVIE_DETAILS_ITEM_LIST);
         URI_MATCHER.addURI(MoviesContract.AUTHORITY,"movieDetails/#",MOVIE_DETAILS_ITEM_ID);
 
-
-
-
-
     }
 
 

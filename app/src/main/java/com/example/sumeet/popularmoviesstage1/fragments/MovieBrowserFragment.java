@@ -16,6 +16,7 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -45,9 +46,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MovieBrowserFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnItemClick;
 
-    //ArrayList<Movie> dataset;
+public class MovieBrowserFragment extends Fragment implements AdapterView.OnItemSelectedListener , Target{
+
+
     ArrayList<Movie> dataset;
 
     int currentSortOption;
@@ -57,8 +62,17 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
     String url="";
 
+    @Bind(R.id.coordinatorLayout)
     CoordinatorLayout coordinatorLayout;
 
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+
+    @Bind(R.id.appBar)
+    AppBarLayout appBarLayout;
+
+    @Bind(R.id.recyclerViewMovies)
+    RecyclerView recyclerView;
 
     final String BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
 
@@ -79,28 +93,28 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
     final String SORT_OPTION_POPULARITY = "popularity.desc";
 
 
-    RecyclerView recyclerView;
+
     MoviesAdapter adapter;
     GridLayoutManager layoutManager;
+
+    @Bind(R.id.spinnerSortOptions)
     Spinner sortOptions;
 
 
-    boolean isTwoPane = false;
+    //boolean isTwoPane = false;
 
     final String isTwoPane_KEY = "isTwoPane";
 
 
-    Toolbar toolbar;
-    AppBarLayout appBarLayout;
 
 
-    public boolean isTwoPane() {
-        return isTwoPane;
-    }
+    //public boolean isTwoPane() {
+      //  return isTwoPane;
+    //}
 
-    public void setTwoPane(boolean twoPane) {
-        isTwoPane = twoPane;
-    }
+    //public void setTwoPane(boolean twoPane) {
+      //  isTwoPane = twoPane;
+    //}
 
     @Nullable
     @Override
@@ -108,18 +122,34 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        dataset = Globals.getMovieDataset();
-
         View fragmentView = inflater.inflate(R.layout.activity_movie_browser,null,false);
 
-        recyclerView = (RecyclerView) fragmentView.findViewById(R.id.recyclerViewMovies);
+        ButterKnife.bind(this,fragmentView);
+
+
+        //coordinatorLayout = (CoordinatorLayout) fragmentView.findViewById(R.id.coordinatorLayout);
+        //appBarLayout = (AppBarLayout) fragmentView.findViewById(R.id.appBar);
+
+        //recyclerView = (RecyclerView) fragmentView.findViewById(R.id.recyclerViewMovies);
+
+        //toolbar = (Toolbar) fragmentView.findViewById(R.id.toolbar);
+        //sortOptions = (Spinner) fragmentView.findViewById(R.id.spinnerSortOptions);
+
+
+
+
+        dataset = Globals.getMovieDataset();
+
+
 
         adapter = new MoviesAdapter(dataset,getActivity(),this);
         recyclerView.setAdapter(adapter);
 
         layoutManager = new GridLayoutManager(getActivity(), 2);
 
-        toolbar = (Toolbar) fragmentView.findViewById(R.id.toolbar);
+
+
+
         toolbar.setTitle(getResources().getString(R.string.app_name));
 
 
@@ -128,6 +158,7 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
         if (metrics.widthPixels >= 600 && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT))
         {
+            // in case of larger width of tables set the column count to 3
             layoutManager.setSpanCount(3);
         }
 
@@ -155,6 +186,17 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
         Log.d("backdropCheck",String.valueOf(dataset.size()) + " : " + String.valueOf(currentPage));
 
 
+        recyclerView.addOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+
+
+
+            }
+        });
+
 
         recyclerView.setOnScrollListener(new OnScrollListener() {
             @Override
@@ -165,6 +207,8 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
                 if(currentSortOption != SORT_BY_FAVOURITES)
                 {
+
+
 
                 if (layoutManager.findLastVisibleItemPosition()==(dataset.size()-1)) {
 
@@ -194,7 +238,7 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
         Log.d("URL", url);
 
 
-        sortOptions = (Spinner) fragmentView.findViewById(R.id.spinnerSortOptions);
+
         sortOptions.setOnItemSelectedListener(this);
 
 
@@ -203,10 +247,6 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
         }
 
-        coordinatorLayout = (CoordinatorLayout) fragmentView.findViewById(R.id.coordinatorLayout);
-
-
-        appBarLayout = (AppBarLayout) fragmentView.findViewById(R.id.appBar);
 
 
         if(sortOptions.getSelectedItemPosition() == 2)
@@ -235,57 +275,9 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
             int rand = r.nextInt(max - min + 1) + min;
 
 
-            Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w185/" + dataset.get(rand).getPosterURL()).into(new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-
-
-//                actionBarImage.setImageBitmap(bitmap);
-
-                    Palette palette = Palette.from(bitmap).generate();
-
-
-                    int color = 000000;
-                    int vibrant = palette.getVibrantColor(color);
-                    //int vibrantLight = palette.getLightVibrantColor(default);
-                    int vibrantDark = palette.getDarkVibrantColor(color);
-                    //int muted = palette.getMutedColor(default);
-                    //int mutedLight = palette.getLightMutedColor(default);
-                    //int mutedDark = palette.getDarkMutedColor(default);
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                        getActivity().getWindow().setStatusBarColor(vibrantDark);
-
-                    }
-
-                    //collapsingToolbarLayout.setContentScrimColor(vibrant);
-                    appBarLayout.setBackgroundColor(vibrant);
-                    toolbar.setBackgroundColor(vibrant);
-
-
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                }
-            });
+            Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w185/" + dataset.get(rand).getPosterURL()).into(this);
 
         }
-    }
-
-
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-
     }
 
 
@@ -323,11 +315,6 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
             return;
 
         }
-
-
-
-
-
 
 
 
@@ -444,6 +431,7 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
     }
 
+
     public void displayFavourites()
     {
         ArrayList<Movie> moviesList = new ArrayList<>();
@@ -494,6 +482,42 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
     }
 
+    @Override
+    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+        Palette palette = Palette.from(bitmap).generate();
+
+
+        int color = 000000;
+        int vibrant = palette.getVibrantColor(color);
+        //int vibrantLight = palette.getLightVibrantColor(default);
+        int vibrantDark = palette.getDarkVibrantColor(color);
+        //int muted = palette.getMutedColor(default);
+        //int mutedLight = palette.getLightMutedColor(default);
+        //int mutedDark = palette.getDarkMutedColor(default);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getActivity().getWindow().setStatusBarColor(vibrantDark);
+
+        }
+
+        //collapsingToolbarLayout.setContentScrimColor(vibrant);
+        appBarLayout.setBackgroundColor(vibrant);
+        toolbar.setBackgroundColor(vibrant);
+
+
+    }
+
+    @Override
+    public void onBitmapFailed(Drawable errorDrawable) {
+
+    }
+
+    @Override
+    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+    }
 
 
     public interface fragmentCallback{
@@ -505,8 +529,6 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        outState.putBoolean(isTwoPane_KEY , isTwoPane);
     }
 
 }

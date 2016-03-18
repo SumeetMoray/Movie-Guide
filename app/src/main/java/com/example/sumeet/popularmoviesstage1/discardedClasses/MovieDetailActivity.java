@@ -66,6 +66,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         movieForDisplay = new Movie();
 
+        /*
         movieForDisplay.setPosterURL(getIntent().getStringExtra(Movie.POSTER_URL_KEY));
         movieForDisplay.setPlotSynopsis(getIntent().getStringExtra(Movie.PLOT_SYNOPSIS_KEY));
         movieForDisplay.setOriginalTitle(getIntent().getStringExtra(Movie.ORIGINAL_TITLE_KEY));
@@ -73,6 +74,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         movieForDisplay.setUserRating(getIntent().getDoubleExtra(Movie.USER_RATING_KEY,0));
         movieForDisplay.setMovieId(getIntent().getIntExtra(Movie.MOVIE_ID_KEY,0));
 
+
+        */
 
 
 
@@ -85,7 +88,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         originalTitle = (TextView) findViewById(R.id.original_title);
 
-        reviews = (TextView) findViewById(R.id.reviews);
+        //reviews = (TextView) findViewById(R.id.reviews);
 
         if(movieForDisplay!=null) {
 
@@ -156,8 +159,8 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                         MovieReview movieReview = new MovieReview();
 
-                        movieReview.setAuthorName(reviewJSON.getString("author"));
-                        movieReview.setReview(reviewJSON.getString("content"));
+                        movieReview.setAuthor(reviewJSON.getString("author"));
+                        movieReview.setContent(reviewJSON.getString("content"));
 
                         reviewsList.add(movieReview);
 
@@ -195,8 +198,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         for(MovieReview review : reviewsList)
         {
 
-            reviewString = reviewString + "\n\n" + review.getAuthorName() + "\n\n" +
-                    review.getReview();
+            reviewString = reviewString + "\n\n" + review.getAuthor() + "\n\n" +
+                    review.getContent();
 
 
         }

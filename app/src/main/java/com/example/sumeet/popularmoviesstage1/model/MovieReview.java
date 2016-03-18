@@ -5,41 +5,41 @@ package com.example.sumeet.popularmoviesstage1.model;
  */
 public class MovieReview {
 
-    int reviewID; // primary key
-    int movieID; // foreign key
-    String authorName;
-    String review;
+    String id; // primary key
+    String author; // foreign key
+    String content;
+    String url;
 
 
-    public int getReviewID() {
-        return reviewID;
+    public String getId() {
+        return id;
     }
 
-    public void setReviewID(int reviewID) {
-        this.reviewID = reviewID;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public int getMovieID() {
-        return movieID;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setMovieID(int movieID) {
-        this.movieID = movieID;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
-    public String getAuthorName() {
-        return authorName;
+    public String getContent() {
+        return content;
     }
 
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public String getReview() {
-        return review;
+    public String getUrl() {
+        return url;
     }
 
-    public void setReview(String review) {
-        this.review = review;
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

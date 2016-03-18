@@ -13,12 +13,13 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -29,10 +30,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.sumeet.popularmoviesstage1.R;
+import com.example.sumeet.popularmoviesstage1.ServiceContract.MovieReviewsService;
+import com.example.sumeet.popularmoviesstage1.ServiceContract.MovieTrailersService;
 import com.example.sumeet.popularmoviesstage1.VolleySingleton;
 import com.example.sumeet.popularmoviesstage1.data.MoviesContract;
 import com.example.sumeet.popularmoviesstage1.model.Movie;
 import com.example.sumeet.popularmoviesstage1.model.MovieReview;
+import com.example.sumeet.popularmoviesstage1.model.MovieReviewsEndpoint;
+import com.example.sumeet.popularmoviesstage1.model.MovieTrailer;
+import com.example.sumeet.popularmoviesstage1.model.MovieTrailerEndpoint;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -43,19 +49,40 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MovieDetailFragment extends Fragment implements Target{
 
+    @Bind(R.id.movieReviewsList)
+    RecyclerView movieReviewsList;
+
+    @Bind(R.id.toolbar)
     Toolbar toolbar;
 
+    @Bind(R.id.fab)
     FloatingActionButton fab;
 
+    @Bind(R.id.collapsingToolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;
-    FloatingActionButton floatingActionButton;
 
 
+
+    @Bind(R.id.actionBarImage)
     ImageView actionBarImage;
 
+
+    MovieDetailAdapter movieDetailAdapter;
+
+
+    final String BASE_URL_API = "http://api.themoviedb.org";
 
     final String BASE_URL= "http://api.themoviedb.org/3/movie/";
     final String API_KEY_PARAM = "api_key";
@@ -63,14 +90,18 @@ public class MovieDetailFragment extends Fragment implements Target{
     final String API_KEY ="65d0d0521287ca89086b923344334318";
 
 
-    Movie movieForDisplay;
+
+    Movie movieForDisplay = null;
+
     ArrayList<MovieReview> reviewsList = new ArrayList<>();
 
+    ArrayList<MovieTrailer> movieTrailersList = new ArrayList<>();
 
 
 
-    ImageView moviePoster;
-    TextView originalTitle,releaseDate,voteAverage,plotSynopsis,monthAndDay,reviews;
+
+
+
 
     String[] months = {"January",
             "February",
@@ -88,10 +119,14 @@ public class MovieDetailFragment extends Fragment implements Target{
 
 
 
+    // default constructor
 
     public MovieDetailFragment() {
         super();
     }
+
+
+    // getters and Setters
 
     public Movie getMovieForDisplay() {
         return movieForDisplay;
@@ -107,85 +142,48 @@ public class MovieDetailFragment extends Fragment implements Target{
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-
-
-        setHasOptionsMenu(true);
-
-
         View fragmentView = inflater.inflate(R.layout.activity_movie_detail,container,false);
 
+        ButterKnife.bind(this,fragmentView);
+
+        // initialize the movie Reviews list
+        movieDetailAdapter = new MovieDetailAdapter(reviewsList,movieForDisplay,getContext(),movieTrailersList);
+
+
+        movieReviewsList.setAdapter(movieDetailAdapter);
+
+        movieReviewsList.setLayoutManager(new GridLayoutManager(getActivity(),1));
+
+        //movieReviewsList.setNestedScrollingEnabled(true);
+
+
+        //setHasOptionsMenu(true);
 
 
 
-        //movieForDisplay.setPosterURL(getIntent().getStringExtra(Movie.POSTER_URL_KEY));
-        //movieForDisplay.setPlotSynopsis(getIntent().getStringExtra(Movie.PLOT_SYNOPSIS_KEY));
-        //movieForDisplay.setOriginalTitle(getIntent().getStringExtra(Movie.ORIGINAL_TITLE_KEY));
-        //movieForDisplay.setReleaseDate(getIntent().getStringExtra(Movie.RELEASE_DATE_KEY));
-        //movieForDisplay.setUserRating(getIntent().getDoubleExtra(Movie.USER_RATING_KEY,0));
-        //movieForDisplay.setMovieId(getIntent().getIntExtra(Movie.MOVIE_ID_KEY,0));
 
 
 
-        toolbar = (Toolbar) fragmentView.findViewById(R.id.toolbar);
+        //toolbar = (Toolbar) fragmentView.findViewById(R.id.toolbar);
+        //moviePoster = (ImageView) fragmentView.findViewById(R.id.movie_poster);
+        //releaseDate = (TextView) fragmentView.findViewById(R.id.release_date_year);
+        //voteAverage = (TextView) fragmentView.findViewById(R.id.vote_average);
+        //plotSynopsis = (TextView) fragmentView.findViewById(R.id.plotSynopsis);
+        //monthAndDay = (TextView) fragmentView.findViewById(R.id.month_day);
+
+        //originalTitle = (TextView) fragmentView.findViewById(R.id.original_title);
+
+        //reviews = (TextView) fragmentView.findViewById(R.id.reviews);
+        //actionBarImage = (ImageView) fragmentView.findViewById(R.id.actionBarImage);
+
+        //collapsingToolbarLayout = (CollapsingToolbarLayout) fragmentView.findViewById(R.id.collapsingToolbar);
+
+
+        //fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
 
 
 
 
-        moviePoster = (ImageView) fragmentView.findViewById(R.id.movie_poster);
-        releaseDate = (TextView) fragmentView.findViewById(R.id.release_date_year);
-        voteAverage = (TextView) fragmentView.findViewById(R.id.vote_average);
-        plotSynopsis = (TextView) fragmentView.findViewById(R.id.plotSynopsis);
-        monthAndDay = (TextView) fragmentView.findViewById(R.id.month_day);
-
-        originalTitle = (TextView) fragmentView.findViewById(R.id.original_title);
-
-        reviews = (TextView) fragmentView.findViewById(R.id.reviews);
-        actionBarImage = (ImageView) fragmentView.findViewById(R.id.actionBarImage);
-
-
-
-        fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
-
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(!checkWetherFavourite()) {
-
-                    ContentValues values = new ContentValues();
-
-                    values.put(MoviesContract.Movie.MOVIE_ID, movieForDisplay.getMovieId());
-                    values.put(MoviesContract.Movie.BACKDROP_IMAGE_URL, movieForDisplay.getBackdropImageURL());
-                    values.put(MoviesContract.Movie.ORIGINAL_TITLE, movieForDisplay.getOriginalTitle());
-                    values.put(MoviesContract.Movie.PLOT_SYNOPSIS, movieForDisplay.getPlotSynopsis());
-                    values.put(MoviesContract.Movie.POSTER_URL, movieForDisplay.getPosterURL());
-                    values.put(MoviesContract.Movie.RELEASE_DATE, movieForDisplay.getReleaseDate());
-                    values.put(MoviesContract.Movie.USER_RATING, movieForDisplay.getUserRating());
-
-                    getActivity().getContentResolver().insert(MoviesContract.Movie.CONTENT_URI, values);
-
-                    fab.setImageResource(R.drawable.ic_favorite_white_24dp);
-
-                }else
-                {
-                    int rowCount = getActivity().getContentResolver().delete(MoviesContract.Movie.CONTENT_URI,
-                            MoviesContract.Movie.MOVIE_ID + " = ?",
-                            new String[]{String.valueOf(movieForDisplay.getMovieId())});
-
-                    if(rowCount == 1)
-                    {
-                        fab.setImageResource(R.drawable.ic_favorite_border_white_24dp);
-                    }
-
-                }
-
-            }
-        });
-
-
-        collapsingToolbarLayout = (CollapsingToolbarLayout) fragmentView.findViewById(R.id.collapsingToolbar);
-        floatingActionButton = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -198,11 +196,43 @@ public class MovieDetailFragment extends Fragment implements Target{
 
         toolbar.inflateMenu(R.menu.menu_movie_browser);
 
-        checkWetherFavourite();
-        displayMovie();
+
+        updateTitleAndBackdrop();
+        loadTrailersAndReviews();
+
+
+
+
+
+
 
         return  fragmentView;
     }
+
+
+
+    public void loadTrailersAndReviews()
+    {
+
+        if(!checkWetherFavourite())
+        {
+
+            if(movieForDisplay!=null) {
+                makeRequestReviewsRetrofit();
+                //makeRequestTrailers();
+
+                makeRequestTrailersRetrofit();
+            }
+
+
+        }else
+        {
+
+        }
+
+
+    }
+
 
 
     public boolean checkWetherFavourite()
@@ -229,43 +259,16 @@ public class MovieDetailFragment extends Fragment implements Target{
 
 
 
-    public void displayMovie()
+    public void updateTitleAndBackdrop()
     {
 
         if(movieForDisplay!=null) {
 
-
-
             toolbar.setTitle(movieForDisplay.getOriginalTitle());
 
             Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w342/" + movieForDisplay.getBackdropImageURL()).placeholder(R.drawable.images).into(actionBarImage);
-
-            Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w185/" + movieForDisplay.getPosterURL()).into(moviePoster);
-            originalTitle.setText(movieForDisplay.getOriginalTitle());
-            //releaseDate.setText(movieForDisplay.getReleaseDate());
-            voteAverage.setText(String.valueOf(movieForDisplay.getUserRating()) + " / 10");
-            plotSynopsis.setText(movieForDisplay.getPlotSynopsis());
-
-            SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd");
-
-            try {
-
-                java.util.Date dDate = sdf.parse(movieForDisplay.getReleaseDate());
-
-                releaseDate.setText(String.valueOf(dDate.getYear()+1900));
-
-                //monthAndDay.setText(months[dDate.getMonth()-1] + " " + String.valueOf(dDate.getDay()));
-
-
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-
             Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w342/" + movieForDisplay.getBackdropImageURL()).placeholder(R.drawable.images).into(this);
 
-            makeRequest();
-            makeRequestTrailers();
 
         }
 
@@ -275,7 +278,7 @@ public class MovieDetailFragment extends Fragment implements Target{
 
 
     // request reviews
-    public void makeRequest()
+    public void makeRequestReviews()
     {
 
         String url = BASE_URL + movieForDisplay.getMovieId() + "/reviews";
@@ -305,15 +308,14 @@ public class MovieDetailFragment extends Fragment implements Target{
 
                         MovieReview movieReview = new MovieReview();
 
-                        movieReview.setAuthorName(reviewJSON.getString("author"));
-                        movieReview.setReview(reviewJSON.getString("content"));
+                        movieReview.setAuthor(reviewJSON.getString("author"));
+                        movieReview.setContent(reviewJSON.getString("content"));
 
                         reviewsList.add(movieReview);
 
                     }
 
-
-                    updateReviews();
+                    movieDetailAdapter.notifyDataSetChanged();
 
 
                 } catch (JSONException e) {
@@ -398,33 +400,6 @@ public class MovieDetailFragment extends Fragment implements Target{
 
 
 
-    public void updateReviews()
-    {
-        String reviewString = "";
-
-        for(MovieReview review : reviewsList)
-        {
-
-            reviewString = reviewString
-                    + "\n\n\n"
-                    + "++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-                    + "\n\n"
-                    + review.getAuthorName()
-                    + "\n\n"
-                    + review.getReview();
-
-
-        }
-
-        reviewString = reviewString
-                + "\n\n"
-                 + "++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-        +"\n\n";
-
-        reviews.setText(reviewString);
-
-
-    }
 
 
     @Override
@@ -434,7 +409,7 @@ public class MovieDetailFragment extends Fragment implements Target{
 
             Palette palette = Palette.from(bitmap).generate();
 
-            int color = 000000;
+            int color = getResources().getColor(R.color.colorAccent);
             int vibrant = palette.getVibrantColor(color);
             int vibrantLight = palette.getLightVibrantColor(color);
             int vibrantDark = palette.getDarkVibrantColor(color);
@@ -442,19 +417,31 @@ public class MovieDetailFragment extends Fragment implements Target{
             int mutedLight = palette.getLightMutedColor(color);
             int mutedDark = palette.getDarkMutedColor(color);
 
+            Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
+
+            //if(vibrantSwatch!=null) {
+              //  originalTitle.setTextColor(vibrantSwatch.getTitleTextColor());
+            //}
+
+
+
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                 getActivity().getWindow().setStatusBarColor(vibrantDark);
-                //originalTitle.setTextColor(000000);
+
             }
 
-            floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(vibrantDark));
-            originalTitle.setBackgroundColor(vibrantDark);
+            fab.setBackgroundTintList(ColorStateList.valueOf(vibrantDark));
+
+            //originalTitle.setBackgroundColor(vibrantDark);
+
             collapsingToolbarLayout.setContentScrimColor(vibrant);
 
 
             //actionBarImage.setImageBitmap(bitmap);
+
+            movieDetailAdapter.notifyColorChange(vibrantDark,muted);
 
     }
 
@@ -471,6 +458,8 @@ public class MovieDetailFragment extends Fragment implements Target{
     }
 
 
+
+    /*
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -480,7 +469,129 @@ public class MovieDetailFragment extends Fragment implements Target{
         //MenuItem item = menu.add("Fav");
 
         //item.setIcon(R.drawable.ic_favorite_white_24dp);
+    }
+
+    */
 
 
+
+    public void makeRequestReviewsRetrofit()
+    {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL_API)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        MovieReviewsService movieReviewsService = retrofit.create(MovieReviewsService.class);
+
+        Call<MovieReviewsEndpoint> movieReviewsEndpointCall = movieReviewsService.getMovieReviews(movieForDisplay.getMovieId(),API_KEY);
+
+        movieReviewsEndpointCall.enqueue(new Callback<MovieReviewsEndpoint>() {
+            @Override
+            public void onResponse(Call<MovieReviewsEndpoint> call, retrofit2.Response<MovieReviewsEndpoint> response) {
+
+
+                MovieReviewsEndpoint movieReviewsEndpoint = response.body();
+
+                if(movieReviewsEndpoint!=null) {
+
+                    List<MovieReview> movieReviewList = movieReviewsEndpoint.getResults();
+                    reviewsList.addAll(movieReviewList);
+
+                    movieDetailAdapter.notifyDataSetChanged();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<MovieReviewsEndpoint> call, Throwable t) {
+
+            }
+        });
+
+
+    }
+
+    public void makeRequestTrailersRetrofit()
+    {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL_API)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+
+        MovieTrailersService movieTrailersService = retrofit.create(MovieTrailersService.class);
+
+
+        Call<MovieTrailerEndpoint> movieTrailerEndpointCall = movieTrailersService.getMovieTrailers(movieForDisplay.getMovieId(),API_KEY);
+
+        movieTrailerEndpointCall.enqueue(new Callback<MovieTrailerEndpoint>() {
+            @Override
+            public void onResponse(Call<MovieTrailerEndpoint> call, retrofit2.Response<MovieTrailerEndpoint> response) {
+
+
+                MovieTrailerEndpoint movieTrailerEndpoint = response.body();
+                List<MovieTrailer> trailerList = movieTrailerEndpoint.getResults();
+
+                movieTrailersList.addAll(trailerList);
+
+                movieDetailAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onFailure(Call<MovieTrailerEndpoint> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+
+
+    @OnClick(R.id.fab)
+    public void markMovieAsFavourite()
+    {
+        if(!checkWetherFavourite()) {
+
+            ContentValues values = new ContentValues();
+
+            values.put(MoviesContract.Movie.MOVIE_ID, movieForDisplay.getMovieId());
+            values.put(MoviesContract.Movie.BACKDROP_IMAGE_URL, movieForDisplay.getBackdropImageURL());
+            values.put(MoviesContract.Movie.ORIGINAL_TITLE, movieForDisplay.getOriginalTitle());
+            values.put(MoviesContract.Movie.PLOT_SYNOPSIS, movieForDisplay.getPlotSynopsis());
+            values.put(MoviesContract.Movie.POSTER_URL, movieForDisplay.getPosterURL());
+            values.put(MoviesContract.Movie.RELEASE_DATE, movieForDisplay.getReleaseDate());
+            values.put(MoviesContract.Movie.USER_RATING, movieForDisplay.getUserRating());
+
+            getActivity().getContentResolver().insert(MoviesContract.Movie.CONTENT_URI, values);
+
+            values.clear();
+
+
+
+            fab.setImageResource(R.drawable.ic_favorite_white_24dp);
+
+        }else
+        {
+            int rowCount = getActivity().getContentResolver().delete(MoviesContract.Movie.CONTENT_URI,
+                    MoviesContract.Movie.MOVIE_ID + " = ?",
+                    new String[]{String.valueOf(movieForDisplay.getMovieId())});
+
+            if(rowCount == 1)
+            {
+                fab.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+            }
+
+        }
+
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        ButterKnife.unbind(this);
     }
 }

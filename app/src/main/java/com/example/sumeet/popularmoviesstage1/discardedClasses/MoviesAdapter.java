@@ -58,6 +58,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
                 Intent intent = new Intent(context, MovieDetailActivity.class);
 
+                /*
                 intent.putExtra(Movie.POSTER_URL_KEY,movie.getPosterURL());
                 intent.putExtra(Movie.PLOT_SYNOPSIS_KEY,movie.getPlotSynopsis());
                 intent.putExtra(Movie.ORIGINAL_TITLE_KEY,movie.getOriginalTitle());
@@ -65,6 +66,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                 intent.putExtra(Movie.USER_RATING_KEY,movie.getUserRating());
                 intent.putExtra(Movie.MOVIE_ID_KEY,movie.getMovieId());
 
+*/
                 context.startActivity(intent);
 
             }

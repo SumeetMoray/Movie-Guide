@@ -20,10 +20,6 @@ public class MoviesContract {
 
 
 
-
-
-
-
     public static final class Movie
     {
 
@@ -37,10 +33,6 @@ public class MoviesContract {
         public static final String POSTER_URL = "posterURL";
         public static final String ORIGINAL_TITLE = "originalTitle";
         public static final String TABLE_NAME = "movieDetails";
-
-
-
-
 
 
 
@@ -61,16 +53,7 @@ public class MoviesContract {
 
         public static final Uri CONTENT_URI = Uri.withAppendedPath(MoviesContract.CONTENT_URI,TABLE_NAME);
 
-
     }
-
-
-
-
-
-
-
-
 
 
 }

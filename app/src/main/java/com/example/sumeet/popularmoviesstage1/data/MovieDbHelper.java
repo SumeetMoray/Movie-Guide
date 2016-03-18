@@ -30,12 +30,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 + MoviesContract.Movie.BACKDROP_IMAGE_URL + " TEXT"
                 + ")";
 
-
         db.execSQL(createStatement);
-
-
-
-
 
     }
 

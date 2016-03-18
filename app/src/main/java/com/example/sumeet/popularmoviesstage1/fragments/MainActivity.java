@@ -56,15 +56,9 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-
         //setSupportActionBar(toolbar);
-
-
-
-
-
 
         if(savedInstanceState==null)
         {
@@ -73,10 +67,10 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
 
             if(findViewById(R.id.movie_detail_container)!= null)
             {
-                fragment.setTwoPane(true);
+                //fragment.setTwoPane(true);
             } else
             {
-                fragment.setTwoPane(false);
+                //fragment.setTwoPane(false);
 
             }
 
@@ -95,30 +89,11 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
             getSupportFragmentManager().popBackStackImmediate();
         }
 
-
-
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        //getSupportActionBar().hide();
-
     }
-
-
-
-    /*
-    public void notifyDisplayFavourites()
-    {
-
-        movieDetailFragment.displayFavourites();
-
-    }
-    */
-
-
-
 }

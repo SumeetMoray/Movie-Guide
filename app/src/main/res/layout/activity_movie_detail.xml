@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:clipToPadding="false"
     tools:context=".discardedClasses.MovieDetailActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -59,22 +60,26 @@
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
-
-
-
-
     </android.support.design.widget.AppBarLayout>
 
 
-
-
-
+    <!--
     <include layout="@layout/content_movie_detail" />
 
+    -->
+
+    <android.support.v7.widget.RecyclerView
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:id="@+id/movieReviewsList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
+        app:fabSize="normal"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_anchor="@id/appBar"
