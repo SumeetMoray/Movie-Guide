@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.style.TtsSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -302,8 +303,15 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 
+    public Movie getMovieForDisplay() {
+        return movieForDisplay;
+    }
+
+    public void setMovieForDisplay(Movie movieForDisplay) {
+        this.movieForDisplay = movieForDisplay;
 
 
+    }
 
     public void displayMovieContent(ViewHolderMovieDetails holder)
     {
@@ -339,19 +347,26 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
 
-            String date = movieForDisplay.getReleaseDate();
+            String date = "abcd";
+
+            date = movieForDisplay.getReleaseDate();
 
 
-            if(date.length()>=10) {
+            Log.d("applog",String.valueOf("") + " : "+ movieForDisplay);
 
-                String year = date.substring(0, 4);
-                String month = date.substring(5, 7);
-                String day = date.substring(8, 10);
+            if(date!=null) {
+
+                if (date.length() >= 10) {
+
+                    String year = date.substring(0, 4);
+                    String month = date.substring(5, 7);
+                    String day = date.substring(8, 10);
 
 
-                holder.releaseDate.setText(year);
-                holder.monthAndDay.setText(months[Integer.parseInt(month) - 1] + " : " + day);
+                    holder.releaseDate.setText(year);
+                    holder.monthAndDay.setText(months[Integer.parseInt(month) - 1] + " : " + day);
 
+                }
             }
 
         }

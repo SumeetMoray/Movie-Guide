@@ -116,6 +116,12 @@ public class MovieDetailFragment extends Fragment implements Target{
 
     public void setMovieForDisplay(Movie movieForDisplay) {
         this.movieForDisplay = movieForDisplay;
+
+        if(movieDetailAdapter!=null)
+        {
+            movieDetailAdapter.setMovieForDisplay(movieForDisplay);
+
+        }
     }
 
     private ShareActionProvider mShareActionProvider;
@@ -129,6 +135,14 @@ public class MovieDetailFragment extends Fragment implements Target{
         View fragmentView = inflater.inflate(R.layout.activity_movie_detail,container,false);
 
         ButterKnife.bind(this,fragmentView);
+
+
+
+        if(savedInstanceState!=null) {
+            movieForDisplay = savedInstanceState.getParcelable("movie");
+        }
+
+
 
         // initialize the movie Reviews list
         movieDetailAdapter = new MovieDetailAdapter(reviewsList,movieForDisplay,getContext(),movieTrailersList);
@@ -155,7 +169,7 @@ public class MovieDetailFragment extends Fragment implements Target{
         toolbar.inflateMenu(R.menu.menu_movie_browser);
 
 
-        //shareAction();
+        shareAction();
 
 
         checkWetherFavourite();
@@ -168,19 +182,13 @@ public class MovieDetailFragment extends Fragment implements Target{
     }
 
 
-    public void shareAction()
-    {
-        String movieInfo = "Movie Name : " + movieForDisplay.getOriginalTitle()
-                + "\n" + "Release Date : " + movieForDisplay.getReleaseDate()
-                + "\n" + "User Rating : " + movieForDisplay.getUserRating()
-                + "\n" + "Movie Plot : \n" + movieForDisplay.getPlotSynopsis()
-                + "\n\n" + "Source : http://www.tmdb.com" ;
+    public void shareAction() {
 
 
-        String firstTrailerURL="";
+        String firstTrailerURL = "";
 
 
-        if(movieTrailersList.size()>0) {
+        if (movieTrailersList.size() > 0) {
             firstTrailerURL = "https://www.youtube.com/watch?v=" + movieTrailersList.get(0).getKey();
         }
 
@@ -191,14 +199,12 @@ public class MovieDetailFragment extends Fragment implements Target{
         sendIntent.putExtra(Intent.EXTRA_TEXT, firstTrailerURL);
 
 
-
-        sendIntent.putExtra(Intent.EXTRA_SUBJECT,"A movie recommendation !!");
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "A movie recommendation !!");
 
         sendIntent.setType("text/plain");
 
 
-
-        if(movieTrailersList.size()>0) {
+        if (movieTrailersList.size() > 0) {
 
             Intent intent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse("https://www.youtube.com/watch?v=" + movieTrailersList.get(0).getKey()));
@@ -208,10 +214,21 @@ public class MovieDetailFragment extends Fragment implements Target{
 
         ShareActionProvider mShareActionProvider = new ShareActionProvider(getActivity());
 
-        mShareActionProvider.setShareIntent(sendIntent);
+        if (mShareActionProvider != null && sendIntent != null) {
+            mShareActionProvider.setShareIntent(sendIntent);
+        }
 
-        MenuItem item = toolbar.getMenu().findItem(R.id.action_share);
-        MenuItemCompat.setActionProvider(item, mShareActionProvider);
+        try {
+
+
+            MenuItem item = toolbar.getMenu().findItem(R.id.action_share);
+            MenuItemCompat.setActionProvider(item, mShareActionProvider);
+
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
     }
 
 
@@ -541,15 +558,20 @@ public class MovieDetailFragment extends Fragment implements Target{
 
 
                 MovieTrailerEndpoint movieTrailerEndpoint = response.body();
-                List<MovieTrailer> trailerList = movieTrailerEndpoint.getResults();
 
-                movieTrailersList.addAll(trailerList);
+                if (movieTrailerEndpoint != null)
+                {
+
+                    List<MovieTrailer> trailerList = movieTrailerEndpoint.getResults();
+
+                    movieTrailersList.addAll(trailerList);
+
+
+
+                    movieDetailAdapter.notifyDataSetChanged();
+                }
 
                 shareAction();
-
-                movieDetailAdapter.notifyDataSetChanged();
-
-
 
             }
 
@@ -610,4 +632,16 @@ public class MovieDetailFragment extends Fragment implements Target{
         // unbind the butterknife library
         ButterKnife.unbind(this);
     }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if(movieForDisplay!=null) {
+            outState.putParcelable("movie", movieForDisplay);
+        }
+
+    }
+
 }

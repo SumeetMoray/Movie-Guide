@@ -15,6 +15,8 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
 
     MovieDetailFragment movieDetailFragment;
 
+    Movie movieForDisplay = new Movie();
+
     @Override
     public void movieSelected(Movie movie) {
 
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
 
         movieDetailFragment.setMovieForDisplay(movie);
 
+        movieForDisplay = movie;
 
         // Two pane case
         // && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
@@ -61,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
+
+
+
         if(savedInstanceState==null)
         {
 
@@ -80,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
 
                 movieDetailFragment = new MovieDetailFragment();
 
-                movieDetailFragment.setMovieForDisplay(null);
+                movieDetailFragment.setMovieForDisplay(movieForDisplay);
 
                 getSupportFragmentManager()
                         .beginTransaction()
@@ -114,4 +120,8 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
         super.onResume();
 
     }
+
+
+
+
 }

@@ -125,15 +125,6 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
         ButterKnife.bind(this,fragmentView);
 
 
-        //coordinatorLayout = (CoordinatorLayout) fragmentView.findViewById(R.id.coordinatorLayout);
-        //appBarLayout = (AppBarLayout) fragmentView.findViewById(R.id.appBar);
-
-        //recyclerView = (RecyclerView) fragmentView.findViewById(R.id.recyclerViewMovies);
-
-        //toolbar = (Toolbar) fragmentView.findViewById(R.id.toolbar);
-        //sortOptions = (Spinner) fragmentView.findViewById(R.id.spinnerSortOptions);
-
-
         adapter = new MoviesAdapter(dataset,getActivity(),this);
         recyclerView.setAdapter(adapter);
 
@@ -247,6 +238,9 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
         }
 
 
+
+        //loadFirstMovie();
+
         return fragmentView;
     }
 
@@ -343,10 +337,16 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
                         dataset.add(movie);
 
-                        adapter.notifyDataSetChanged();
-
 
                     }
+
+
+                    adapter.notifyDataSetChanged();
+
+
+                    //loadFirstMovie();
+
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -476,6 +476,35 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
         }
 
     }
+
+
+
+    boolean isfirstLoad = false;
+    public void loadFirstMovie() {
+        if (!isfirstLoad) {
+            try {
+
+                Log.d("applog","Outside Is first Load");
+
+                if (dataset != null && dataset.size()>0 &&(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
+
+                    movieSelected(dataset.get(0));
+
+                    isfirstLoad = true;
+
+                    Log.d("applog","Inside Is first Load");
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+
+        }
+    }
+
+
+
 
     @Override
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
