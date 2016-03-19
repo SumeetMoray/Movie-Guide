@@ -620,6 +620,8 @@ public class MovieDetailFragment extends Fragment implements Target{
                 fab.setImageResource(R.drawable.ic_favorite_border_white_24dp);
             }
 
+
+
         }
 
     }
