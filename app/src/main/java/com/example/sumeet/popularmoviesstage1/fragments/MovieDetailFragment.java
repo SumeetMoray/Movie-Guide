@@ -634,6 +634,8 @@ public class MovieDetailFragment extends Fragment implements Target{
     }
 
 
+
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
