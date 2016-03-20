@@ -125,7 +125,7 @@ public class MovieDetailFragment extends Fragment implements Target{
         }
     }
 
-    private ShareActionProvider mShareActionProvider;
+
 
     @Nullable
     @Override
@@ -215,7 +215,7 @@ public class MovieDetailFragment extends Fragment implements Target{
 
         ShareActionProvider mShareActionProvider = new ShareActionProvider(getActivity());
 
-        if (mShareActionProvider != null && sendIntent != null) {
+        if ((mShareActionProvider != null) && (sendIntent != null)) {
             mShareActionProvider.setShareIntent(sendIntent);
         }
 
@@ -361,14 +361,13 @@ public class MovieDetailFragment extends Fragment implements Target{
 
 
 
-    // Making request using volley. Commented Out !!
 
 
 
+
+    // make request for the Trailers using volley
     public void makeRequestTrailersVolley()
     {
-        //http://api.themoviedb.org/3/movie/281957/videos?api_key=65d0d0521287ca89086b923344334318
-
 
         String url = BASE_URL + movieForDisplay.getMovieId() + "/videos";
 
@@ -405,11 +404,6 @@ public class MovieDetailFragment extends Fragment implements Target{
                         trailer.setKey(result.getString("key"));
 
                         trailer.setName(result.getString("name"));
-
-
-//                                startActivity(new Intent(
-  //                              Intent.ACTION_VIEW,
-    //                            Uri.parse("https://www.youtube.com/watch?v=" + key)));
 
 
                         movieTrailersList.add(trailer);
@@ -540,6 +534,8 @@ public class MovieDetailFragment extends Fragment implements Target{
 
     }
 
+
+    // Make a request in order to obtain trailers
     public void makeRequestTrailers()
     {
         Retrofit retrofit = new Retrofit.Builder()

@@ -83,7 +83,7 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
     final String VOTE_COUNT_PARAM = "vote_count.gte";
 
-    // Example : final String API_KEY = "21234234234234";
+    // Example : final String API_KEY = "1234567890";
     final String API_KEY ="INSERT-THE-API-KEY-HERE";
 
 
@@ -101,20 +101,6 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
     Spinner sortOptions;
 
 
-    //boolean isTwoPane = false;
-
-    final String isTwoPane_KEY = "isTwoPane";
-
-
-
-
-    //public boolean isTwoPane() {
-      //  return isTwoPane;
-    //}
-
-    //public void setTwoPane(boolean twoPane) {
-      //  isTwoPane = twoPane;
-    //}
 
     @Nullable
     @Override
@@ -247,29 +233,6 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
     }
 
 
-
-
-    /*
-
-    public void changeColor()
-    {
-
-        if(dataset.size()!=0) {
-
-
-            int min = 1;
-            int max = dataset.size()-1;
-
-            Random r = new Random();
-            int rand = r.nextInt(max - min + 1) + min;
-
-
-            Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w185/" + dataset.get(rand).getPosterURL()).into(this);
-
-        }
-    }
-
-    */
 
 
     void makeRequest()
