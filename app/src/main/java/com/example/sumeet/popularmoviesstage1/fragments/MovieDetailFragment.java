@@ -89,7 +89,8 @@ public class MovieDetailFragment extends Fragment implements Target{
     final String BASE_URL= "http://api.themoviedb.org/3/movie/";
     final String API_KEY_PARAM = "api_key";
 
-    final String API_KEY ="65d0d0521287ca89086b923344334318";
+    final String API_KEY ="INSERT-THE-API-KEY-HERE";
+
 
 
 

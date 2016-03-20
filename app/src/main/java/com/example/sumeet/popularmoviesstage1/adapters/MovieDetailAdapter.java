@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateFormat;
-import android.text.format.DateUtils;
-import android.text.style.TtsSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +17,6 @@ import com.example.sumeet.popularmoviesstage1.model.MovieReview;
 import com.example.sumeet.popularmoviesstage1.model.MovieTrailer;
 import com.squareup.picasso.Picasso;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import butterknife.Bind;
@@ -372,8 +367,6 @@ public class MovieDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
     }
-
-
 
 
     public void notifyColorChange(int vibrantDark,int vibrant)

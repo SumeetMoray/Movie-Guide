@@ -83,7 +83,9 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
     final String VOTE_COUNT_PARAM = "vote_count.gte";
 
-    final String API_KEY ="65d0d0521287ca89086b923344334318";
+    // Example : final String API_KEY = "21234234234234";
+    final String API_KEY ="INSERT-THE-API-KEY-HERE";
+
 
     final String API_KEY_PARAM = "api_key";
     final String SORT_PARAM = "sort_by";
