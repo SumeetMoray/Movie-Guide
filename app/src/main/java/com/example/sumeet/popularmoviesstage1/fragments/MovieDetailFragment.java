@@ -89,7 +89,7 @@ public class MovieDetailFragment extends Fragment implements Target{
     final String BASE_URL= "http://api.themoviedb.org/3/movie/";
     final String API_KEY_PARAM = "api_key";
 
-    final String API_KEY ="INSERT-THE-API-KEY-HERE";
+    final String API_KEY ="INSERT-YOUR-API-KEY-HERE";
 
 
 
@@ -183,6 +183,8 @@ public class MovieDetailFragment extends Fragment implements Target{
     }
 
 
+
+    // for providing the share button functionality
     public void shareAction() {
 
 
@@ -468,14 +470,21 @@ public class MovieDetailFragment extends Fragment implements Target{
 
             }
 
-            fab.setBackgroundTintList(ColorStateList.valueOf(vibrantDark));
-            //fab.setBackgroundColor(vibrantDark);
+
+            if(fab!=null && vibrantDark!=0) {
+
+                fab.setBackgroundTintList(ColorStateList.valueOf(vibrantDark));
+
+            }//fab.setBackgroundColor(vibrantDark);
 
             //originalTitle.setBackgroundColor(vibrantDark);
 
-            collapsingToolbarLayout.setContentScrimColor(vibrant);
 
+            if(collapsingToolbarLayout!=null) {
 
+                collapsingToolbarLayout.setContentScrimColor(vibrant);
+
+            }
             //actionBarImage.setImageBitmap(bitmap);
 
             movieDetailAdapter.notifyColorChange(vibrantDark,muted);
