@@ -8,7 +8,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -84,7 +86,7 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
     final String VOTE_COUNT_PARAM = "vote_count.gte";
 
     // Example : final String API_KEY = "1234567890";
-    final String API_KEY ="INSERT-YOUR-API-KEY-HERE";
+    final String API_KEY ="65d0d0521287ca89086b923344334318";
 
 
     final String API_KEY_PARAM = "api_key";
@@ -121,16 +123,28 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
 
 
+
+
+
         toolbar.setTitle(getResources().getString(R.string.app_name));
 
 
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
+        /*
         if (metrics.widthPixels >= 600 && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT))
         {
             // in case of larger width of tables set the column count to 3
             layoutManager.setSpanCount(3);
+        }*/
+
+//        layoutManager.setSpanCount(metrics.widthPixels/230);
+
+
+        if(getResources().getConfiguration().orientation== Configuration.ORIENTATION_PORTRAIT)
+        {
+
         }
 
 
@@ -163,33 +177,20 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
                 super.onScrollStateChanged(recyclerView, newState);
 
 
-
-
-            }
-        });
-
-
-        recyclerView.setOnScrollListener(new OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-
-
                 if(currentSortOption != SORT_BY_FAVOURITES)
                 {
 
 
 
-                if (layoutManager.findLastVisibleItemPosition()==(dataset.size()-1)) {
+                    if (layoutManager.findLastVisibleItemPosition()==(dataset.size()-1)) {
 
-                    if (currentPage <= (totalPages - 1)) {
+                        if (currentPage <= (totalPages - 1)) {
 
-                        Log.d("backdropCheck",String.valueOf(dataset.size()) + " : " + String.valueOf(currentPage));
+                            Log.d("backdropCheck",String.valueOf(dataset.size()) + " : " + String.valueOf(currentPage));
 
-                        currentPage = currentPage + 1;
+                            currentPage = currentPage + 1;
 
-                        Snackbar.make(coordinatorLayout,"Loading page : " + String.valueOf(currentPage),Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(coordinatorLayout,"Loading page : " + String.valueOf(currentPage),Snackbar.LENGTH_SHORT).show();
 
                             //changeColor();
 
@@ -199,9 +200,10 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
                 }
 
+
+
             }
         });
-
 
 
 
@@ -471,13 +473,24 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
 
 
+
+
     @Override
     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
 
         Palette palette = Palette.from(bitmap).generate();
 
 
-        int color = 000000;
+        int color;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            color = getResources().getColor(R.color.colorAccent,null);
+        }else
+        {
+            color = getResources().getColor(R.color.colorAccent);
+        }
+
+
         int vibrant = palette.getVibrantColor(color);
         //int vibrantLight = palette.getLightVibrantColor(default);
         int vibrantDark = palette.getDarkVibrantColor(color);
@@ -491,7 +504,7 @@ public class MovieBrowserFragment extends Fragment implements AdapterView.OnItem
 
         }
 
-        //collapsingToolbarLayout.setContentScrimColor(vibrant);
+//        collapsingToolbarLayout.setContentScrimColor(vibrant);
         appBarLayout.setBackgroundColor(vibrant);
         toolbar.setBackgroundColor(vibrant);
 

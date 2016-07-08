@@ -89,7 +89,7 @@ public class MovieDetailFragment extends Fragment implements Target{
     final String BASE_URL= "http://api.themoviedb.org/3/movie/";
     final String API_KEY_PARAM = "api_key";
 
-    final String API_KEY ="INSERT-YOUR-API-KEY-HERE";
+    final String API_KEY ="65d0d0521287ca89086b923344334318";
 
 
 
@@ -288,8 +288,15 @@ public class MovieDetailFragment extends Fragment implements Target{
 
             toolbar.setTitle(movieForDisplay.getOriginalTitle());
 
-            Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w342/" + movieForDisplay.getBackdropImageURL()).placeholder(R.drawable.images).into(actionBarImage);
-            Picasso.with(getActivity()).load("http://image.tmdb.org/t/p/w342/" + movieForDisplay.getBackdropImageURL()).placeholder(R.drawable.images).into(this);
+            Picasso.with(getActivity())
+                    .load("http://image.tmdb.org/t/p/w342/" + movieForDisplay.getBackdropImageURL())
+                    .placeholder(R.drawable.images)
+                    .into(actionBarImage);
+
+            Picasso.with(getActivity())
+                    .load("http://image.tmdb.org/t/p/w342/" + movieForDisplay.getBackdropImageURL())
+                    .placeholder(R.drawable.images)
+                    .into(this);
 
 
         }
@@ -447,7 +454,7 @@ public class MovieDetailFragment extends Fragment implements Target{
 
             Palette palette = Palette.from(bitmap).generate();
 
-            int color = 323235;
+            int color = getResources().getColor(R.color.colorAccent);
             int vibrant = palette.getVibrantColor(color);
             int vibrantLight = palette.getLightVibrantColor(color);
             int vibrantDark = palette.getDarkVibrantColor(color);
@@ -488,7 +495,6 @@ public class MovieDetailFragment extends Fragment implements Target{
             //actionBarImage.setImageBitmap(bitmap);
 
             movieDetailAdapter.notifyColorChange(vibrantDark,muted);
-
     }
 
 

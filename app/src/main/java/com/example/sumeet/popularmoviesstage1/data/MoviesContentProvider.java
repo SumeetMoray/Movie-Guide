@@ -84,7 +84,6 @@ public class MoviesContentProvider extends ContentProvider{
 
                 cursor =  db.query(MoviesContract.Movie.TABLE_NAME,projection,selection,selectionArgs,null,null,sortOrder);
 
-
                 break;
 
             case MOVIE_DETAILS_ITEM_ID:
@@ -92,7 +91,6 @@ public class MoviesContentProvider extends ContentProvider{
                 cursor = db.query(MoviesContract.Movie.TABLE_NAME,projection,selection,selectionArgs,null,null,sortOrder);
 
                 break;
-
 
 
             default:
@@ -121,11 +119,9 @@ public class MoviesContentProvider extends ContentProvider{
 
         }
 
-
-
-
         return ContentUris.withAppendedId(uri,id);
     }
+
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
@@ -139,14 +135,9 @@ public class MoviesContentProvider extends ContentProvider{
 
             case MOVIE_DETAILS_ITEM_LIST:
 
-
-
                 break;
 
             case MOVIE_DETAILS_ITEM_ID:
-
-
-
 
                 break;
 

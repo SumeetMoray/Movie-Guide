@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Popular Movies Stage 2</string>
+    <string name="app_name">Movie Guide : Favourite Movies</string>
     <string name="action_settings">Settings</string>
 
     <string-array name="sortOptions">

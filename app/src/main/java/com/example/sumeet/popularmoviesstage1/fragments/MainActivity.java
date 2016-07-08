@@ -93,15 +93,11 @@ public class MainActivity extends AppCompatActivity implements MovieBrowserFragm
                         .replace(R.id.movie_detail_container,movieDetailFragment)
                         .commit();
 
-
-
-
             } else
             {
                 //fragment.setTwoPane(false);
 
             }
-
 
         }
 
